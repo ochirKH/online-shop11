@@ -2,7 +2,7 @@
 
 <div class="grid">
 
-    <form action="handle_login.php" method="POST" class="form login">
+    <form action="/login" method="POST" class="form login">
 
         <div class="form__field">
             <label for="login__username">
@@ -23,7 +23,7 @@
             <input id="login__password" type="password" name="password" class="form__input" placeholder="Password"
                    required>
         </div>
-        <label style="color: red"> <?php echo $errors['email'] ?? '';?></label>
+        <label style="color: white"> <?php echo $errors['email'] ?? '';?></label>
         <div class="form__field">
             <input type="submit" value="Sign In">
         </div>
@@ -209,7 +209,7 @@
 
         --loginLabelBackgroundColor: #363b41;
 
-        --loginSubmitBackgroundColor: #ea4c88;
+        --loginSubmitBackgroundColor: #bb4cea;
         --loginSubmitColor: #eee;
         --loginSubmitHoverBackgroundColor: #d44179;
     }
