@@ -86,6 +86,7 @@ if (empty($errors)) {
     // Если нет ошибок, то выполняем процесс регистрации
 
     $pdo = new PDO("pgsql:host=postgres; port=5432; dbname=name", "user", "pwd");
+
     $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
     $hash = password_hash($password, PASSWORD_DEFAULT);
     $stmt->execute(['name' => $name, 'email' => $email, 'password' => $hash]);
