@@ -10,6 +10,12 @@ if (isset($_POST['product-id'])) {
 if (isset($_POST['amount'])) {
     $amount = $_POST['amount'];
 }
+if (!is_numeric($amount)){
+    exit('Такой цифры не существует');
+}
+if (!is_numeric($productId)){
+    exit('Такого товара не существует');
+}
 
 $pdo = new PDO("pgsql:host=postgres; port=5432; dbname=name", "user", "pwd");
 $stmt = $pdo->prepare('SELECT id FROM products WHERE id = :product'); // Проверяем есть ли такой товар в магазине

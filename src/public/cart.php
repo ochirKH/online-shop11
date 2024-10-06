@@ -17,7 +17,7 @@ $result = [];
 
 foreach ($products as $product) {
     $productId = $product['product_id'];
-    $exec = $pdo->prepare('SELECT * FROM products WHERE id = :product'); // далее смотрим те продукты которые были у пользователя
+    $exec = $pdo->prepare('SELECT * FROM products WHERE id = :product'); // далее смотрим что за именно эти продукты (имя, фото итд)
     $exec->execute(['product' => $productId]);
     $result[] = $exec->fetch();
 
