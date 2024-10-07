@@ -1,53 +1,28 @@
-<?php
-session_start();
 
-if (!isset($_SESSION['userId'])) {
-    header("Location: /get_login.php");
-}
-$userId = $_SESSION['userId'];
-
-
-$pdo = new PDO("pgsql:host=postgres; port=5432; dbname=name", "user", "pwd");
-
-$exec = $pdo->prepare('SELECT product_id FROM user_products WHERE user_id = :user'); // вытаскиваю Id продуктов у пользователя
-$exec->execute(['user' => $userId]);
-$products = $exec->fetchAll();
-
-$result = [];
-
-foreach ($products as $product) {
-    $productId = $product['product_id'];
-    $exec = $pdo->prepare('SELECT * FROM products WHERE id = :product'); // далее смотрим что за именно эти продукты (имя, фото итд)
-    $exec->execute(['product' => $productId]);
-    $result[] = $exec->fetch();
-
-}
-
-?>
 <div class="container">
-    <a href='/logout'>Выход</a>
+    <a href='/logout'>ВЫХОД</a>
     <div>
-        <a href='/profile'>Личный кабинет</a>
+        <a href='/profile'>ЛИЧНЫЙ КАБИНЕТ</a>
     </div>
     <div>
-        <a href='/main'>Главная страница</a>
+        <a href='/cart'>КОРЗИНА</a>
     </div>
-    <h3>КОРЗИНА</h3>
+    <h3>КАТАЛОГ</h3>
     <div class="card-deck">
         <?php foreach ($result as $product): ?>
         <form action="/main" method="POST"></form>
         <div class="card text-center">
             <a href="#">
                 <div class="card-header">
-                    <?php echo $product['name'] ?? ''; ?>
+                    <?php echo $product['name']; ?>
                 </div>
                 <div class="card-footer">
-                    <?php echo $product['price'] ?? ''; ?> рублей
+                    <?php echo $product['price']; ?> рублей
                 </div>
-                <img class="card-img-top" src=<?php echo $product['images'] ?? ''; ?> width="500" alt="Card image">
+                <img class="card-img-top" src=<?php echo $product['images'] ?> width="500" alt="Card image">
                 <div class="card-body">
-                    <p class="card-text text-muted"> <?php echo $product['category'] ?? ''; ?></p>
-                    <a href="#"><h5 class="card-title"><?php echo $product['description'] ?? ''; ?></h5></a>
+                    <p class="card-text text-muted"> <?php echo $product['category']; ?></p>
+                    <a href="#"><h5 class="card-title"><?php echo $product['description']; ?></h5></a>
                 </div>
             </a>
         </div>

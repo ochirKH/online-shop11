@@ -1,4 +1,7 @@
 <?php
+require_once '../Controller/CartController.php';
+require_once '../Controller/ProductController.php';
+require_once '../Controller/UserController.php';
 
 // создаем переменные для УРИ и Метода
 
@@ -7,45 +10,53 @@ $requestMethod = $_SERVER['REQUEST_METHOD'];
 
 if ($requestUri === '/login') {
     if ($requestMethod === 'GET') {
-        require_once './get_login.php';
+        $user = new UserController();
+        $user->getLogin();
     } elseif ($requestMethod === 'POST') {
-        require_once './handle_login.php';
+        $user = new UserController();
+        $user->login();
     } else {
         echo "$requestUri не поддерживается с методом $requestMethod";
     }
 } elseif ($requestUri === '/registration') {
     if ($requestMethod === 'GET') {
-        require_once './get_registration.php';
+        $user = new UserController();
+        $user->getRegistration();
     } elseif ($requestMethod === 'POST') {
-        require_once './handle_registration.php';
+        $user = new UserController();
+        $user->registration();
     } else {
         echo "$requestUri не поддерживается с методом $requestMethod";
     }
 } elseif ($requestUri === '/main') {
     if ($requestMethod === 'GET') {
-        require_once './main.php';
+        $mainUser = new ProductController();
+        $mainUser->getAll();
     } else {
         echo "$requestUri не поддерживается с методом $requestMethod";
     }
-} elseif ($requestUri === '/add-product'){
-    if ($requestMethod === 'GET'){
-        require_once './get_add_product.php';
-    } elseif ($requestMethod === 'POST'){
-        require_once './handle_add_product.php';
+} elseif ($requestUri === '/add-product') {
+    if ($requestMethod === 'GET') {
+        $product = new CartController();
+        $product->getAddProduct();
+    } elseif ($requestMethod === 'POST') {
+        $product = new CartController();
+        $product->addProductsInCart();
     } else {
         echo "$requestUri не поддерживается с методом $requestMethod";
     }
-} elseif ($requestUri === '/cart'){
-    if ($requestMethod === 'GET'){
-        require_once './cart.php';
+} elseif ($requestUri === '/cart') {
+    if ($requestMethod === 'GET') {
+        $cart = new CartController();
+        $cart->checkCart();
     } else {
         echo "$requestUri не поддерживается с методом $requestMethod";
     }
-} elseif ($requestUri === '/logout'){
-    if ($requestMethod === 'GET'){
-        require_once './logout.php';
+} elseif ($requestUri === '/logout') {
+    if ($requestMethod === 'GET') {
+        $user = new UserController();
+        $user->logout();
     }
-}
-else {
-    require_once './404.php';
+} else {
+    require_once './View/404.php';
 }
