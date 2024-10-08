@@ -11,7 +11,7 @@ class UserModel
         $stmt->execute(['name' => $name, 'email' => $email, 'password' => $hash]);
     }
 
-    public function checkUser($email)
+    public function checkUser($email): array|false
     {
         $pdo = new PDO("pgsql:host=postgres; port=5432; dbname=name", "user", "pwd");
 
@@ -20,5 +20,11 @@ class UserModel
         $stmt = $pdo->prepare('SELECT * FROM users WHERE email = :email');
         $stmt->execute(['email' => $email]);
         $result = $stmt->fetch();
+
+        if ($result === false){
+            return false;
+        } else {
+            return $result;
+        }
     }
 }

@@ -40,7 +40,7 @@ class UserController
         }
     }
 
-    public function validate()
+    private function validate()
     {
         if (isset($_POST['name'])) {
             $name = $_POST['name'];
@@ -149,7 +149,7 @@ class UserController
             $errors['email'] = 'Пароль или логин указан не верно!';
         } else {
             $passwordFromDb = $user['password'];
-            if (password_verify($user, $passwordFromDb)) {
+            if (password_verify($password, $passwordFromDb)) {
                 session_start();
                 $_SESSION['userId'] = $user['id'];
                 $_SESSION['userName'] = $user['name'];

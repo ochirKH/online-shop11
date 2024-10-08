@@ -1,6 +1,6 @@
 <?php
 
-
+require_once './../Model/ProductsModel.php';
 class ProductController
 {
     private ProductsModel $productsModel;
@@ -15,10 +15,10 @@ class ProductController
         session_start();
 
         if (!isset($_SESSION['userId'])) {
-            header("Location: /get_login.php");
+            header("Location: /login");
         } else {
-            $this->productsModel->getAll();
-            require_once '../View/main.php';
+            $result = $this->productsModel->getAll();
         }
+        require_once '../View/main.php';
     }
 }

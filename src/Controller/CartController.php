@@ -1,25 +1,32 @@
 <?php
-
-
+require_once './../Model/UserProductsModel.php';
+require_once './../Model/ProductsModel.php';
 require_once '../Model/UserModel.php';
 
 class CartController
 {
     private UserModel $userModel;
     private ProductsModel $productsModel;
+    private UserProductsModel $userProductsModel;
 
     public function __construct()
     {
         $this->userModel = new UserModel();
         $this->productsModel = new ProductsModel();
+        $this->userProductsModel = new UserProductsModel();
     }
 
-    public function getAddProduct()
+    public function getAddProduct(): void
     {
-        require_once '../View/get_add_product.php';
+        session_start();
+        if (!isset($_SESSION['userId'])){
+            header('Location: /login');
+        } else {
+            require_once '../View/get_add_product.php';
+        }
     }
 
-    public function addProductsInCart()
+    public function addProductsInCart(): void
     {
         session_start();
 
@@ -39,32 +46,32 @@ class CartController
             exit('Такого товара не существует');
         }
 
-        $result = $this->userModel->checkStoreProduct($productId);
+        $result = $this->userProductsModel->checkStoreProduct($productId);
 
         if ($result === false) {
             exit('Такого товара не существует');
         }
 
-        $result = $this->userModel->checkProductsAndUser($userId, $productId); // Проверка у пользователя  таких продуктов
+        $result = $this->userProductsModel->checkProductsAndUser($userId, $productId); // Проверка у пользователя  таких продуктов
 
         if ($result === null) { // Если товара нет в корзине, то создаем новый
-            $this->userModel->addProductandAmount($userId, $productId, $amount); // Добавляю в корзину товар и количество
+            $this->userProductsModel->addProductandAmount($userId, $productId, $amount); // Добавляю в корзину товар и количество
         } else {
-            $this->userModel->updateAmount($userId, $productId, $result['amount'] + $amount); //если товар уже есть такой, то меняе количество
+            $this->userProductsModel->updateAmount($userId, $productId, $result['amount'] + $amount); //если товар уже есть такой, то меняе количество
         }
 
         header("Location: /main");
     }
 
-    public function checkCart()
+    public function checkCart(): void
     {
         session_start();
 
         if (!isset($_SESSION['userId'])) {
-            header("Location: /get_login.php");
+            header("Location: /login");
         }
         $userId = $_SESSION['userId'];
-        $this->productController->checkCart($userId);
+        $result = $this->productsModel->checkCart($userId);
         require_once '../View/cart.php';
     }
 
