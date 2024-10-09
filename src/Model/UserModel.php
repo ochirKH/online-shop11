@@ -2,7 +2,7 @@
 
 class UserModel
 {
-    public function addUserBd($name, $email, $password)
+    public function addUserBd($name, $email, $password): void
     {
         $pdo = new PDO("pgsql:host=postgres; port=5432; dbname=name", "user", "pwd");
 
@@ -11,7 +11,7 @@ class UserModel
         $stmt->execute(['name' => $name, 'email' => $email, 'password' => $hash]);
     }
 
-    public function checkUser($email): array|false
+    public function checkUserEmail($email): array|false
     {
         $pdo = new PDO("pgsql:host=postgres; port=5432; dbname=name", "user", "pwd");
 
@@ -26,5 +26,21 @@ class UserModel
         } else {
             return $result;
         }
+    }
+
+    public function checkUserId($userId): array|false
+    {
+        $pdo = new PDO("pgsql:host=postgres; port=5432; dbname=name", "user", "pwd");
+
+        $stmt = $pdo->prepare('SELECT * FROM users WHERE id = :userId');
+        $stmt->execute(['userId'=>$userId]);
+        $result = $stmt->fetch();
+
+        if ($result === false){
+            return false;
+        } else {
+            return $result;
+        }
+
     }
 }

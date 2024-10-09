@@ -10,7 +10,7 @@ class ProductController
         $this->productsModel = new ProductsModel();
     }
 
-    public function getAll()
+    public function getAll(): void
     {
         session_start();
 

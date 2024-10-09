@@ -57,6 +57,13 @@ if ($requestUri === '/login') {
         $user = new UserController();
         $user->logout();
     }
+} elseif ($requestUri === '/profile'){
+    if ($requestMethod === 'GET'){
+        $user = new UserController();
+        $user->myProfile();
+    } else {
+        echo "$requestUri не поддерживается с методом $requestMethod";
+    }
 } else {
-    require_once './View/404.php';
+    require_once './../View/404.php';
 }

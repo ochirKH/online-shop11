@@ -11,12 +11,12 @@ class UserController
         $this->userModel = new UserModel();
     }
 
-    public function getLogin()
+    public function getLogin(): void
     {
         require_once '../View/get_login.php';
     }
 
-    public function getRegistration()
+    public function getRegistration(): void
     {
         require_once '../View/get_registration.php';
     }
@@ -40,7 +40,7 @@ class UserController
         }
     }
 
-    private function validate()
+    private function validate(): array
     {
         if (isset($_POST['name'])) {
             $name = $_POST['name'];
@@ -88,7 +88,7 @@ class UserController
         return $errors;
     }
 
-    public function registration()
+    public function registration(): void
     {
 
         if (isset($_POST['name'])) {
@@ -117,14 +117,14 @@ class UserController
         }
     }
 
-    public function logout()
+    public function logout(): void
     {
         session_start();
         session_destroy();
         header('Location: /login');
     }
 
-    public function login()
+    public function login(): void
     {
         $errors = [];
 
@@ -142,7 +142,7 @@ class UserController
             $errors['password'] = 'поле пароля пустая';
         }
 
-        $user = $this->userModel->checkUser($email);
+        $user = $this->userModel->checkUserEmail($email);
 
 
         if ($user === false) {
@@ -160,5 +160,17 @@ class UserController
 
         }
         require_once '../View/get_login.php';
+    }
+
+    public function myProfile()
+    {
+        session_start();
+        if (!isset($_SESSION['userId'])){
+            header('Location: /login');
+        } else {
+            $userId = $_SESSION['userId'];
+            $user = $this->userModel->checkUserId($userId);
+        }
+        require_once './../View/profile.php';
     }
 }
