@@ -2,6 +2,13 @@
 
 class ProductsModel
 {
+    public function checkStoreProduct(int $productId): array|false // / Проверяем есть ли такой товар в магазине
+    {
+        $pdo = new PDO("pgsql:host=postgres; port=5432; dbname=name", "user", "pwd");
+        $stmt = $pdo->prepare('SELECT id FROM products WHERE id = :product');
+        $stmt->execute(['product' => $productId]);
+        return $result = $stmt->fetch();
+    }
     public function getAll(): array
     {
         $pdo = new PDO("pgsql:host=postgres; port=5432; dbname=name", "user", "pwd");
@@ -10,7 +17,7 @@ class ProductsModel
         return $result = $exec->fetchAll();
     }
 
-    public function checkCart($userId): array|false
+    public function checkCart(int $userId): array|false
     {
         $pdo = new PDO("pgsql:host=postgres; port=5432; dbname=name", "user", "pwd");
 

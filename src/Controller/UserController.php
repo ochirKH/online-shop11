@@ -21,6 +21,76 @@ class UserController
         require_once '../View/get_registration.php';
     }
 
+    public function registration(): void
+    {
+
+        if (isset($_POST['name'])) {
+            $name = $_POST['name'];
+        }
+
+        if (isset($_POST['email'])) {
+            $email = $_POST['email'];
+        }
+
+        if (isset($_POST['psw-repeat'])) {
+            $repeatPsw = $_POST['psw-repeat'];
+        }
+
+        if (isset($_POST['psw'])) {
+            $password = $_POST['psw'];
+        }
+
+        $errors = $this->validate();
+
+        if (empty($errors)) {
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+            $this->userModel->addUserBd($name, $email, $hash);
+            header('Location: /login');
+        } else {
+            require_once '../View/get_registration.php';
+        }
+    }
+
+
+
+    public function login(): void
+    {
+        $errors = [];
+
+        // проверка на наличие почты
+        if (isset($_POST['email'])) {
+            $email = $_POST['email'];
+        } else {
+            $errors['email'] = 'поле почты пустая';
+        }
+
+        // проверка на наличие пароля
+        if (isset($_POST['password'])) {
+            $password = $_POST['password'];
+        } else {
+            $errors['password'] = 'поле пароля пустая';
+        }
+
+        $user = $this->userModel->checkUserEmail($email);
+
+
+        if ($user === false) {
+            $errors['email'] = 'Пароль или логин указан не верно!';
+        } else {
+            $passwordFromDb = $user['password'];
+            if (password_verify($password, $passwordFromDb)) {
+                session_start();
+                $_SESSION['userId'] = $user['id'];
+                $_SESSION['userName'] = $user['name'];
+                header('Location: /main');
+            } else {
+                $errors['email'] = 'Пароль или логин указан не верно!';
+            }
+
+        }
+        require_once '../View/get_login.php';
+    }
+
     public function variables()
     {
         if (isset($_POST['name'])) {
@@ -88,79 +158,6 @@ class UserController
         return $errors;
     }
 
-    public function registration(): void
-    {
-
-        if (isset($_POST['name'])) {
-            $name = $_POST['name'];
-        }
-
-        if (isset($_POST['email'])) {
-            $email = $_POST['email'];
-        }
-
-        if (isset($_POST['psw-repeat'])) {
-            $repeatPsw = $_POST['psw-repeat'];
-        }
-
-        if (isset($_POST['psw'])) {
-            $password = $_POST['psw'];
-        }
-
-        $errors = $this->validate();
-
-        if (empty($errors)) {
-            $this->userModel->addUserBd($name, $email, $password);
-            header('Location: /login');
-        } else {
-            require_once '../View/get_registration.php';
-        }
-    }
-
-    public function logout(): void
-    {
-        session_start();
-        session_destroy();
-        header('Location: /login');
-    }
-
-    public function login(): void
-    {
-        $errors = [];
-
-        // проверка на наличие почты
-        if (isset($_POST['email'])) {
-            $email = $_POST['email'];
-        } else {
-            $errors['email'] = 'поле почты пустая';
-        }
-
-        // проверка на наличие пароля
-        if (isset($_POST['password'])) {
-            $password = $_POST['password'];
-        } else {
-            $errors['password'] = 'поле пароля пустая';
-        }
-
-        $user = $this->userModel->checkUserEmail($email);
-
-
-        if ($user === false) {
-            $errors['email'] = 'Пароль или логин указан не верно!';
-        } else {
-            $passwordFromDb = $user['password'];
-            if (password_verify($password, $passwordFromDb)) {
-                session_start();
-                $_SESSION['userId'] = $user['id'];
-                $_SESSION['userName'] = $user['name'];
-                header('Location: /main');
-            } else {
-                $errors['email'] = 'Пароль или логин указан не верно!';
-            }
-
-        }
-        require_once '../View/get_login.php';
-    }
 
     public function myProfile()
     {
@@ -172,5 +169,11 @@ class UserController
             $user = $this->userModel->checkUserId($userId);
         }
         require_once './../View/profile.php';
+    }
+    public function logout(): void
+    {
+        session_start();
+        session_destroy();
+        header('Location: /login');
     }
 }

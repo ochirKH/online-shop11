@@ -1,7 +1,7 @@
 <?php
 require_once './../Model/UserProductsModel.php';
 require_once './../Model/ProductsModel.php';
-require_once '../Model/UserModel.php';
+require_once './../Model/UserModel.php';
 
 class CartController
 {
@@ -28,6 +28,31 @@ class CartController
 
     public function addProductsInCart(): void
     {
+        $this->validate();
+
+        $result = $this->productsModel->checkStoreProduct($productId);
+
+        if ($result === false) {
+            exit('Такого товара не существует');
+        }
+
+        // Проверка у пользователя  таких продуктов
+        $result = $this->userProductsModel->checkProductsAndUser($userId, $productId);
+
+
+        if ($result === null) { // Если товара нет в корзине, то создаем новый
+            $this->userProductsModel->addProductandAmount($userId, $productId, $amount);
+            // Добавляю в корзину товар и количество
+        } else {
+            $this->userProductsModel->updateAmount($userId, $productId, $result['amount'] + $amount);
+            //если товар уже есть такой, то меняе количество
+        }
+
+        header("Location: /main");
+    }
+
+    private function validate()
+    {
         session_start();
 
         if (isset($_SESSION['userId'])) {
@@ -45,22 +70,6 @@ class CartController
         if (!is_numeric($productId)) {
             exit('Такого товара не существует');
         }
-
-        $result = $this->userProductsModel->checkStoreProduct($productId);
-
-        if ($result === false) {
-            exit('Такого товара не существует');
-        }
-
-        $result = $this->userProductsModel->checkProductsAndUser($userId, $productId); // Проверка у пользователя  таких продуктов
-
-        if ($result === null) { // Если товара нет в корзине, то создаем новый
-            $this->userProductsModel->addProductandAmount($userId, $productId, $amount); // Добавляю в корзину товар и количество
-        } else {
-            $this->userProductsModel->updateAmount($userId, $productId, $result['amount'] + $amount); //если товар уже есть такой, то меняе количество
-        }
-
-        header("Location: /main");
     }
 
     public function checkCart(): void
