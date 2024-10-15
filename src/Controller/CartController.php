@@ -1,25 +1,28 @@
 <?php
-require_once './../Model/UserProductsModel.php';
-require_once './../Model/ProductsModel.php';
-require_once './../Model/UserModel.php';
+require_once './../Model/UserProduct.php';
+require_once './../Model/Product.php';
+require_once './../Model/User.php';
+require_once './../Model/UserOrder.php';
 
 class CartController
 {
-    private UserModel $userModel;
-    private ProductsModel $productsModel;
-    private UserProductsModel $userProductsModel;
+    private User $user;
+    private Product $product;
+    private UserProduct $userProduct;
+    private UserOrder $userOrder;
 
     public function __construct()
     {
-        $this->userModel = new UserModel();
-        $this->productsModel = new ProductsModel();
-        $this->userProductsModel = new UserProductsModel();
+        $this->user = new User();
+        $this->product = new Product();
+        $this->userProduct = new UserProduct();
+        $this->userOrder = new UserOrder();
     }
 
     public function getAddProduct(): void
     {
         session_start();
-        if (!isset($_SESSION['userId'])){
+        if (!isset($_SESSION['userId'])) {
             header('Location: /login');
         } else {
             require_once '../View/get_add_product.php';
@@ -28,30 +31,29 @@ class CartController
 
     public function addProductsInCart(): void
     {
-        $this->validate();
+        $this->validateForCart();
 
-        $result = $this->productsModel->checkStoreProduct($productId);
+        $result = $this->product->checkStoreProduct($productId);
 
         if ($result === false) {
             exit('Такого товара не существует');
         }
 
         // Проверка у пользователя  таких продуктов
-        $result = $this->userProductsModel->checkProductsAndUser($userId, $productId);
-
+        $result = $this->userProduct->checkProductsAndUser($userId, $productId);
 
         if ($result === null) { // Если товара нет в корзине, то создаем новый
-            $this->userProductsModel->addProductandAmount($userId, $productId, $amount);
+            $this->userProduct->addProductandAmount($userId, $productId, $amount);
             // Добавляю в корзину товар и количество
         } else {
-            $this->userProductsModel->updateAmount($userId, $productId, $result['amount'] + $amount);
+            $this->userProduct->updateAmount($userId, $productId, $result['amount'] + $amount);
             //если товар уже есть такой, то меняе количество
         }
 
         header("Location: /main");
     }
 
-    private function validate()
+    private function validateForCart()
     {
         session_start();
 
@@ -70,6 +72,14 @@ class CartController
         if (!is_numeric($productId)) {
             exit('Такого товара не существует');
         }
+        if (isset($_POST['city'])) {
+            $city = $_POST['city'];
+        }
+
+        if (isset($_POST['number'])) {
+            $number = $_POST['number'];
+        }
+
     }
 
     public function checkCart(): void
@@ -80,8 +90,19 @@ class CartController
             header("Location: /login");
         }
         $userId = $_SESSION['userId'];
-        $result = $this->productsModel->checkCart($userId);
-        require_once '../View/cart.php';
+        $productsInCart = $this->product->checkCart($userId);
+//        print_r($productsInCart);
+        $sumPrice = 0;
+
+        foreach ($productsInCart as $product) {
+//            $getAmount = $this->userProduct->checkIdOrder($userId, $product['id']);
+//            $sum = $product['price'] * $getAmount('amount');
+            var_dump($product['price']);
+            var_dump($userId);
+        }
+
+        require_once './../View/cart.php';
     }
 
 }
+

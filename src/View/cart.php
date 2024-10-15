@@ -7,9 +7,10 @@
     <div>
         <a href='/main'>Главная страница</a>
     </div>
+
     <h3>КОРЗИНА</h3>
     <div class="card-deck">
-        <?php foreach ($result as $product): ?>
+        <?php foreach ($productsInCart as $product): ?>
         <form action="/main" method="POST"></form>
         <div class="card text-center">
             <a href="#">
@@ -25,13 +26,18 @@
                     <a href="#"><h5 class="card-title"><?php echo $product['description'] ?? ''; ?></h5></a>
                 </div>
             </a>
-        </div>
+
         <!--            <input type="text" hidden placeholder="Enter product-id" name="product-id" id="product-id" value="-->
         <?php //echo $product['id']?><!--" required>-->
         <!--            <button type="submit" >Add</button>-->
+
         </form>
+
     </div>
+
     <?php endforeach; ?>
+    </div>    <a href='/buy'>Купить все содержимое в корзине</a>
+
 </div>
 
 <style>
@@ -84,6 +90,4 @@
     .card-footer {
         font-weight: bold;
         font-size: 20px;
-        background-color: white;
-    }
-</style>
+        b

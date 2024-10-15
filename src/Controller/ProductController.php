@@ -1,13 +1,13 @@
 <?php
 
-require_once './../Model/ProductsModel.php';
+require_once './../Model/Product.php';
 class ProductController
 {
-    private ProductsModel $productsModel;
+    private Product $product;
 
     public function __construct()
     {
-        $this->productsModel = new ProductsModel();
+        $this->product = new Product();
     }
 
     public function getAll(): void
@@ -17,8 +17,8 @@ class ProductController
         if (!isset($_SESSION['userId'])) {
             header("Location: /login");
         } else {
-            $result = $this->productsModel->getAll();
+            $result = $this->product->getAll();
         }
-        require_once '../View/main.php';
+        require_once './../View/main.php';
     }
 }

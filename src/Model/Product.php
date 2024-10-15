@@ -1,27 +1,23 @@
 <?php
 
-class ProductsModel
+require_once './../Model/Model.php';
+class Product extends Model
 {
     public function checkStoreProduct(int $productId): array|false // / Проверяем есть ли такой товар в магазине
     {
-        $pdo = new PDO("pgsql:host=postgres; port=5432; dbname=name", "user", "pwd");
-        $stmt = $pdo->prepare('SELECT id FROM products WHERE id = :product');
+        $stmt = $this->pdo->prepare('SELECT id FROM products WHERE id = :product');
         $stmt->execute(['product' => $productId]);
         return $result = $stmt->fetch();
     }
     public function getAll(): array
     {
-        $pdo = new PDO("pgsql:host=postgres; port=5432; dbname=name", "user", "pwd");
-
-        $exec = $pdo->query('SELECT * FROM products');
+        $exec = $this->pdo->query('SELECT * FROM products');
         return $result = $exec->fetchAll();
     }
 
     public function checkCart(int $userId): array|false
     {
-        $pdo = new PDO("pgsql:host=postgres; port=5432; dbname=name", "user", "pwd");
-
-        $exec = $pdo->prepare('SELECT product_id FROM user_products WHERE user_id = :user');
+        $exec = $this->pdo->prepare('SELECT product_id FROM user_products WHERE user_id = :user');
         // вытаскиваю Id продуктов у пользователя
 
         $exec->execute(['user' => $userId]);
@@ -32,7 +28,7 @@ class ProductsModel
         foreach ($products as $product)
         {
             $productId = $product['product_id'];
-            $exec = $pdo->prepare('SELECT * FROM products WHERE id = :product');
+            $exec = $this->pdo->prepare('SELECT * FROM products WHERE id = :product');
             // далее смотрим что за именно эти продукты (имя, фото итд)
 
             $exec->execute(['product' => $productId]);

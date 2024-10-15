@@ -1,14 +1,14 @@
 <?php
 
-require_once './../Model/UserModel.php';
+require_once './../Model/User.php';
 
 class UserController
 {
-    private UserModel $userModel;
+    private User $user;
 
     public function __construct()
     {
-        $this->userModel = new UserModel();
+        $this->user= new User();
     }
 
     public function getLogin(): void
@@ -44,7 +44,7 @@ class UserController
 
         if (empty($errors)) {
             $hash = password_hash($password, PASSWORD_DEFAULT);
-            $this->userModel->addUserBd($name, $email, $hash);
+            $this->user->addUserBd($name, $email, $hash);
             header('Location: /login');
         } else {
             require_once '../View/get_registration.php';
@@ -71,7 +71,7 @@ class UserController
             $errors['password'] = 'поле пароля пустая';
         }
 
-        $user = $this->userModel->checkUserEmail($email);
+        $user = $this->user->checkUserEmail($email);
 
 
         if ($user === false) {
@@ -166,7 +166,7 @@ class UserController
             header('Location: /login');
         } else {
             $userId = $_SESSION['userId'];
-            $user = $this->userModel->checkUserId($userId);
+            $user = $this->user->checkUserId($userId);
         }
         require_once './../View/profile.php';
     }
