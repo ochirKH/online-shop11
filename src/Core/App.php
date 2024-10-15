@@ -1,8 +1,38 @@
 <?php
 
-require_once '../Controller/CartController.php';
-require_once '../Controller/ProductController.php';
-require_once '../Controller/UserController.php';
+//require_once '../Controller/CartController.php';
+//require_once '../Controller/ProductController.php';
+//require_once '../Controller/UserController.php';
+
+$autoloadController = function ($className) {
+    $path = "./../Controller/$className.php";
+    if (file_exists($path)) {
+        require_once $path;
+        return true;
+    }
+    return false;
+};
+$autoloadModel = function ($className) {
+    $path = "./../Model/$className.php";
+    if (file_exists($path)) {
+        require_once $path;
+        return true;
+    }
+    return false;
+};
+$autoloadApp = function ($className){
+    $path = "./../Core/$className.php";
+    if (file_exists($path)){
+        require_once $path;
+        return true;
+    }
+    return false;
+};
+
+
+spl_autoload_register($autoloadController);
+spl_autoload_register($autoloadModel);
+spl_autoload_register($autoloadApp);
 
 class App
 {
@@ -82,9 +112,9 @@ class App
         $requestMethod = $_SERVER['REQUEST_METHOD'];
 
         $route = $this->routes;
-        foreach ($route as $location => $method){
-            if ($requestUri === $location){
-                if (isset($method[$requestMethod])){
+        foreach ($route as $location => $method) {
+            if ($requestUri === $location) {
+                if (isset($method[$requestMethod])) {
                     $getController = $method[$requestMethod]['class'];
                     $getMethod = $method[$requestMethod]['method'];
                     $class = new $getController;
@@ -96,7 +126,6 @@ class App
         }
         http_response_code(404);
         require_once './../View/404.php';
-
 
 
 //        if ($requestUri === '/login') {
