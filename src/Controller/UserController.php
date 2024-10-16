@@ -1,7 +1,5 @@
 <?php
 
-//require_once './../Model/User.php';
-
 namespace Controller;
 
 use \Model\User;
@@ -94,25 +92,6 @@ class UserController
 
         }
         require_once '../View/get_login.php';
-    }
-
-    public function variables()
-    {
-        if (isset($_POST['name'])) {
-            $name = $_POST['name'];
-        }
-
-        if (isset($_POST['email'])) {
-            $email = $_POST['email'];
-        }
-
-        if (isset($_POST['psw-repeat'])) {
-            $repeatPsw = $_POST['psw-repeat'];
-        }
-
-        if (isset($_POST['psw'])) {
-            $password = $_POST['psw'];
-        }
     }
 
     private function validate(): array

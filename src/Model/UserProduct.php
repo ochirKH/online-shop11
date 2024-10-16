@@ -1,9 +1,6 @@
 <?php
 
-//require_once './../Model/Model.php';
-
 namespace Model;
-
 class UserProduct extends Model
 {
 

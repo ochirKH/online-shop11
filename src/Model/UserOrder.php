@@ -1,9 +1,6 @@
 <?php
 
-//require_once './../Model/Model.php';
-
 namespace Model;
-
 class UserOrder extends Model
 {
     public  function add ($deliveryAddress, $user, $product ): void

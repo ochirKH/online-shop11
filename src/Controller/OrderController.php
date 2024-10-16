@@ -1,10 +1,5 @@
 <?php
 
-//require_once './../Model/UserProduct.php';
-//require_once './../Model/Product.php';
-//require_once './../Model/User.php';
-//require_once './../Model/UserOrder.php';
-
 namespace Controller;
 
 use \Model\User;

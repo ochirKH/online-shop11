@@ -1,169 +1,103 @@
 <?php
 
 namespace Core;
+
+use Controller\CartController;
+use Controller\ProductController;
+use Controller\UserController;
+
 class App
 {
     private array $routes = [
         '/login' => [
             'GET' => [
-                'class' => '/Controller/UserController',
+                'class' => UserController::class, // UserController::class это тоже самое как и '/Controller/UserController'
                 'method' => 'getLogin',
             ],
             'POST' => [
-                'class' => '/Controller/UserController',
+                'class' => UserController::class,
                 'method' => 'login',
             ]
         ],
         '/registration' => [
             'GET' => [
-                'class' => '/Controller/UserController',
+                'class' => UserController::class,
                 'method' => 'getRegistration',
             ],
             'POST' => [
-                'class' => '/Controller/UserController',
+                'class' => UserController::class,
                 'method' => 'registration',
             ]
         ],
         '/main' => [
             'GET' => [
-                'class' => '/Controller/ProductController',
+                'class' => ProductController::class,
                 'method' => 'getAll',
             ],
         ],
         '/add-product' => [
             'GET' => [
-                'class' => '/Controller/CartController',
+                'class' => UserController::class,
                 'method' => 'getAddProduct',
             ],
             'POST' => [
-                'class' => '/Controller/CartController',
+                'class' => UserController::class,
                 'method' => 'addProductsInCart',
             ]
         ],
         '/cart' => [
             'GET' => [
-                'class' => '/Controller/CartController',
+                'class' => CartController::class,
                 'method' => 'checkCart',
             ],
         ],
         '/logout' => [
             'GET' => [
-                'class' => '/Controller/UserController',
+                'class' => UserController::class,
                 'method' => 'logout',
             ],
         ],
         '/profile' => [
             'GET' => [
-                'class' => '/Controller/UserController',
+                'class' => UserController::class,
                 'method' => 'myProfile',
             ],
         ],
         '/buy' => [
             'GET' => [
-                'class' => '/Controller/OrderController',
+                'class' => UserController::class,
                 'method' => 'getBuy',
             ],
             'POST' => [
-                'class' => '/Controller/OrderController',
+                'class' => UserController::class,
                 'method' => 'buy',
             ]
         ],
     ];
 
-    public function run()
+    public function run(): void
     {
+        $requestUri = $_SERVER['REQUEST_URI']; // создаем переменные для УРИ
 
-// создаем переменные для УРИ и Метода
+        if (isset($this->routes[$requestUri])) { // проверка если такой УРИ
+            $routesMethod = $this->routes[$requestUri]; // GET or POST or .....
 
-        $requestUri = $_SERVER['REQUEST_URI'];
-        $requestMethod = $_SERVER['REQUEST_METHOD'];
+            $requestMethod = $_SERVER['REQUEST_METHOD']; // создаем переменные для Метода
 
-        $route = $this->routes;
-        foreach ($route as $location => $method) {
-            if ($requestUri === $location) {
-                if (isset($method[$requestMethod])) {
-                    $getController = $method[$requestMethod]['class'];
-                    $getMethod = $method[$requestMethod]['method'];
-                    require_once './..' . $getController . '.php';
-                    $class = new $getController;
-                    return $class->$getMethod();
-                } else {
-                    return "$requestUri не поддерживается с методом $requestMethod";
-                }
+            if (isset($routesMethod[$requestMethod])) { // проверка на наличие GET или POST или ...
+                $handler = $routesMethod[$requestMethod];
+
+                $class = $handler['class'];
+                $method = $handler['method'];
+
+                $obj = new $class();  // создание объекта
+                $obj->$method();
+            } else {
+                echo "$requestUri не поддерживается с методом $requestMethod";
             }
+        } else {
+            http_response_code(404);
+            require_once './../View/404.php';
         }
-        http_response_code(404);
-        require_once './../View/404.php';
     }
 }
-//        if ($requestUri === '/login') {
-//            if ($requestMethod === 'GET') {
-//                $user = new UserController();
-//                $user->getLogin();
-//            } elseif ($requestMethod === 'POST') {
-//                $user = new UserController();
-//                $user->login();
-//            } else {
-//                echo "$requestUri не поддерживается с методом $requestMethod";
-//            }
-//        } elseif ($requestUri === '/registration') {
-//            if ($requestMethod === 'GET') {
-//                $user = new UserController();
-//                $user->getRegistration();
-//            } elseif ($requestMethod === 'POST') {
-//                $user = new UserController();
-//                $user->registration();
-//            } else {
-//                echo "$requestUri не поддерживается с методом $requestMethod";
-//            }
-//        } elseif ($requestUri === '/main') {
-//            if ($requestMethod === 'GET') {
-//                $mainUser = new ProductController();
-//                $mainUser->getAll();
-//            } else {
-//                echo "$requestUri не поддерживается с методом $requestMethod";
-//            }
-//        } elseif ($requestUri === '/add-product') {
-//            if ($requestMethod === 'GET') {
-//                $product = new CartController();
-//                $product->getAddProduct();
-//            } elseif ($requestMethod === 'POST') {
-//                $product = new CartController();
-//                $product->addProductsInCart();
-//            } else {
-//                echo "$requestUri не поддерживается с методом $requestMethod";
-//            }
-//        } elseif ($requestUri === '/cart') {
-//            if ($requestMethod === 'GET') {
-//                $cart = new CartController();
-//                $cart->checkCart();
-//            } else {
-//                echo "$requestUri не поддерживается с методом $requestMethod";
-//            }
-//        } elseif ($requestUri === '/logout') {
-//            if ($requestMethod === 'GET') {
-//                $user = new UserController();
-//                $user->logout();
-//            }
-//        } elseif ($requestUri === '/profile') {
-//            if ($requestMethod === 'GET') {
-//                $user = new UserController();
-//                $user->myProfile();
-//            } else {
-//                echo "$requestUri не поддерживается с методом $requestMethod";
-//            }
-//        } elseif ($requestUri === '/buy') {
-//            if ($requestMethod === 'GET') {
-//                $buy = new OrderController();
-//                $buy->getBuy();
-//            } elseif ($requestMethod === 'POST') {
-//                $buy = new OrderController();
-//                $buy->buy();
-//            } else {
-//                echo "$requestUri не поддерживается с методом $requestMethod";
-//            }
-//        } else {
-//            require_once './../View/404.php';
-//        }
-//
-//    }
