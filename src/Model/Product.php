@@ -1,6 +1,8 @@
 <?php
 
-require_once './../Model/Model.php';
+namespace Model;
+
+//require_once './../Model/Model.php';
 class Product extends Model
 {
     public function checkStoreProduct(int $productId): array|false // / Проверяем есть ли такой товар в магазине

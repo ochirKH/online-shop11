@@ -1,103 +1,70 @@
 <?php
 
-//require_once '../Controller/CartController.php';
-//require_once '../Controller/ProductController.php';
-//require_once '../Controller/UserController.php';
-
-$autoloadController = function ($className) {
-    $path = "./../Controller/$className.php";
-    if (file_exists($path)) {
-        require_once $path;
-        return true;
-    }
-    return false;
-};
-$autoloadModel = function ($className) {
-    $path = "./../Model/$className.php";
-    if (file_exists($path)) {
-        require_once $path;
-        return true;
-    }
-    return false;
-};
-$autoloadApp = function ($className){
-    $path = "./../Core/$className.php";
-    if (file_exists($path)){
-        require_once $path;
-        return true;
-    }
-    return false;
-};
-
-
-spl_autoload_register($autoloadController);
-spl_autoload_register($autoloadModel);
-spl_autoload_register($autoloadApp);
-
+namespace Core;
 class App
 {
     private array $routes = [
         '/login' => [
             'GET' => [
-                'class' => 'UserController',
+                'class' => '/Controller/UserController',
                 'method' => 'getLogin',
             ],
             'POST' => [
-                'class' => 'UserController',
+                'class' => '/Controller/UserController',
                 'method' => 'login',
             ]
         ],
         '/registration' => [
             'GET' => [
-                'class' => 'UserController',
+                'class' => '/Controller/UserController',
                 'method' => 'getRegistration',
             ],
             'POST' => [
-                'class' => 'UserController',
+                'class' => '/Controller/UserController',
                 'method' => 'registration',
             ]
         ],
         '/main' => [
             'GET' => [
-                'class' => 'ProductController',
+                'class' => '/Controller/ProductController',
                 'method' => 'getAll',
             ],
         ],
         '/add-product' => [
             'GET' => [
-                'class' => 'CartController',
+                'class' => '/Controller/CartController',
                 'method' => 'getAddProduct',
             ],
             'POST' => [
-                'class' => 'CartController',
+                'class' => '/Controller/CartController',
                 'method' => 'addProductsInCart',
             ]
         ],
         '/cart' => [
             'GET' => [
-                'class' => 'CartController',
+                'class' => '/Controller/CartController',
                 'method' => 'checkCart',
             ],
         ],
         '/logout' => [
             'GET' => [
-                'class' => 'UserController',
+                'class' => '/Controller/UserController',
                 'method' => 'logout',
             ],
         ],
         '/profile' => [
             'GET' => [
-                'class' => 'UserController',
+                'class' => '/Controller/UserController',
                 'method' => 'myProfile',
             ],
         ],
         '/buy' => [
             'GET' => [
-                'class' => 'OrderController',
+                'class' => '/Controller/OrderController',
                 'method' => 'getBuy',
             ],
             'POST' => [
-                'class' => 'OrderController',
+                'class' => '/Controller/OrderController',
                 'method' => 'buy',
             ]
         ],
@@ -117,6 +84,7 @@ class App
                 if (isset($method[$requestMethod])) {
                     $getController = $method[$requestMethod]['class'];
                     $getMethod = $method[$requestMethod]['method'];
+                    require_once './..' . $getController . '.php';
                     $class = new $getController;
                     return $class->$getMethod();
                 } else {
@@ -126,8 +94,8 @@ class App
         }
         http_response_code(404);
         require_once './../View/404.php';
-
-
+    }
+}
 //        if ($requestUri === '/login') {
 //            if ($requestMethod === 'GET') {
 //                $user = new UserController();
@@ -199,6 +167,3 @@ class App
 //        }
 //
 //    }
-    }
-
-}
