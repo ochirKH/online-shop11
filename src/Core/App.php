@@ -3,6 +3,7 @@
 namespace Core;
 
 use Controller\CartController;
+use Controller\OrderController;
 use Controller\ProductController;
 use Controller\UserController;
 
@@ -37,11 +38,11 @@ class App
         ],
         '/add-product' => [
             'GET' => [
-                'class' => UserController::class,
+                'class' => CartController::class,
                 'method' => 'getAddProduct',
             ],
             'POST' => [
-                'class' => UserController::class,
+                'class' => CartController::class,
                 'method' => 'addProductsInCart',
             ]
         ],
@@ -65,11 +66,11 @@ class App
         ],
         '/buy' => [
             'GET' => [
-                'class' => UserController::class,
+                'class' => OrderController::class,
                 'method' => 'getBuy',
             ],
             'POST' => [
-                'class' => UserController::class,
+                'class' => OrderController::class,
                 'method' => 'buy',
             ]
         ],

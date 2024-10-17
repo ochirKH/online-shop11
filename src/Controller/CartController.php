@@ -4,7 +4,7 @@ namespace Controller;
 
 use \Model\User;
 use \Model\Product;
-use \Model\UserOrder;
+use \Model\Order;
 use \Model\UserProduct;
 
 class CartController
@@ -12,14 +12,14 @@ class CartController
     private User $user;
     private Product $product;
     private UserProduct $userProduct;
-    private UserOrder $userOrder;
+    private Order $userOrder;
 
     public function __construct()
     {
         $this->user = new User();
         $this->product = new Product();
         $this->userProduct = new UserProduct();
-        $this->userOrder = new UserOrder();
+        $this->userOrder = new Order();
     }
 
     public function getAddProduct(): void
@@ -34,9 +34,27 @@ class CartController
 
     public function addProductsInCart(): void
     {
-        $this->validateForCart();
+        session_start();
 
-        $result = $this->product->checkStoreProduct($productId);
+        if (isset($_SESSION['userId'])) {
+            $userId = $_SESSION['userId'];
+        }
+        if (isset($_POST['product-id'])) {
+            $productId = $_POST['product-id'];
+        }
+        if (isset($_POST['amount'])) {
+            $amount = $_POST['amount'];
+        }
+        if (!is_numeric($amount)) {
+            exit('Такой цифры не существует');
+        }
+        if (!is_numeric($productId)) {
+            exit('Такого товара не существует');
+        }
+
+
+
+        $result = $this->product->getProductById($productId);
 
         if ($result === false) {
             exit('Такого товара не существует');
@@ -56,34 +74,6 @@ class CartController
         header("Location: /main");
     }
 
-    private function validateForCart()
-    {
-        session_start();
-
-        if (isset($_SESSION['userId'])) {
-            $userId = $_SESSION['userId'];
-        }
-        if (isset($_POST['product-id'])) {
-            $productId = $_POST['product-id'];
-        }
-        if (isset($_POST['amount'])) {
-            $amount = $_POST['amount'];
-        }
-        if (!is_numeric($amount)) {
-            exit('Такой цифры не существует');
-        }
-        if (!is_numeric($productId)) {
-            exit('Такого товара не существует');
-        }
-        if (isset($_POST['city'])) {
-            $city = $_POST['city'];
-        }
-
-        if (isset($_POST['number'])) {
-            $number = $_POST['number'];
-        }
-
-    }
 
     public function checkCart(): void
     {
@@ -93,19 +83,42 @@ class CartController
             header("Location: /login");
         }
         $userId = $_SESSION['userId'];
-        $productsInCart = $this->product->checkCart($userId);
-//        print_r($productsInCart);
-        $sumPrice = 0;
 
-        foreach ($productsInCart as $product) {
-//            $getAmount = $this->userProduct->checkIdOrder($userId, $product['id']);
-//            $sum = $product['price'] * $getAmount('amount');
-            var_dump($product['price']);
-            var_dump($userId);
+        $cartProductsByUserId = $this->product->getCartUserId($userId); // получаю продукты в корзине пользователя
+
+        $productIds = [];
+        foreach ($cartProductsByUserId as $product) {
+            $productIds[] = $product['product_id']; //  вытаскиваю id продуктов пользователся
+        }
+
+        $products = [];
+        foreach ($productIds as $productId) {
+            $products[] = $this->product->getProductById($productId);
+            // получаю продукты по id с продуктов
+            // id name price images category ....
+        }
+
+        foreach ($products as &$product) {
+            foreach ($cartProductsByUserId as $cartProductByUserId) {
+                if ($cartProductByUserId['product_id'] === $product['id']) {
+                    $product['amount'] = $cartProductByUserId['amount'];
+                    $result[] = $product;
+                }
+            }
+        }
+
+        foreach ($result as $elem){
+            $sumOneProduct[] = $elem['amount'] * $elem['price'];
+        }
+        $sumAll = 0;
+        foreach ($sumOneProduct as $sum){
+            $sumAll += $sum;
         }
 
         require_once './../View/cart.php';
-    }
 
+    }
 }
+
+
 

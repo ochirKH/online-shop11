@@ -10,32 +10,28 @@
 
     <h3>КОРЗИНА</h3>
     <div class="card-deck">
-        <?php foreach ($productsInCart as $product): ?>
+        <?php foreach ($result as $elem): ?>
         <form action="/main" method="POST"></form>
         <div class="card text-center">
             <a href="#">
                 <div class="card-header">
-                    <?php echo $product['name'] ?? ''; ?>
+                    <?php echo $elem['name'] ?? ''; ?>
                 </div>
                 <div class="card-footer">
-                    <?php echo $product['price'] ?? ''; ?> рублей
+                    <?php echo $elem['price'] ?? ''; ?> рублей
                 </div>
-                <img class="card-img-top" src=<?php echo $product['images'] ?? ''; ?> width="500" alt="Card image">
+                <img class="card-img-top" src=<?php echo $elem['images'] ?? ''; ?> width="500" alt="Card image">
                 <div class="card-body">
-                    <p class="card-text text-muted"> <?php echo $product['category'] ?? ''; ?></p>
-                    <a href="#"><h5 class="card-title"><?php echo $product['description'] ?? ''; ?></h5></a>
+                    <p class="card-text text-muted"> <?php echo $elem['category'] ?? ''; ?></p>
+                    <a href="#"><h5 class="card-title"><?php echo $elem['description'] ?? ''; ?></h5></a>
                 </div>
             </a>
-
-        <!--            <input type="text" hidden placeholder="Enter product-id" name="product-id" id="product-id" value="-->
-        <?php //echo $product['id']?><!--" required>-->
-        <!--            <button type="submit" >Add</button>-->
-
         </form>
 
     </div>
 
     <?php endforeach; ?>
+        <p><b><?php echo 'Обшая сумма в корзине ' . $sumAll . ' рублей';  ?></b></p>
     </div>    <a href='/buy'>Купить все содержимое в корзине</a>
 
 </div>

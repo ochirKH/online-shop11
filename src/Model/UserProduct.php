@@ -10,7 +10,7 @@ class UserProduct extends Model
         $stmt->execute(['user' => $user, 'product' => $product, 'amount' => $amount]);
     }
 
-    public function checkIdOrder(int $userId, int $productId): array|null // Проверка у пользователя  таких продуктов
+    public function checkProductsAndUser(int $userId, int $productId): array|null // Проверка у пользователя  таких продуктов
     {
         $stmt = $this->pdo->prepare('SELECT * FROM user_products WHERE user_id = :user AND product_id = :product');
         $stmt->execute(['user' => $userId, 'product' => $productId]);
