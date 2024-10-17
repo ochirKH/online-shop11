@@ -1,29 +1,4 @@
-<?php
-session_start();
 
-if (!isset($_SESSION['userId'])) {
-    header("Location: /get_login.php");
-}
-$userId = $_SESSION['userId'];
-
-
-$pdo = new PDO("pgsql:host=postgres; port=5432; dbname=name", "user", "pwd");
-
-$exec = $pdo->prepare('SELECT product_id FROM user_products WHERE user_id = :user'); // вытаскиваю Id продуктов у пользователя
-$exec->execute(['user' => $userId]);
-$products = $exec->fetchAll();
-
-$result = [];
-
-foreach ($products as $product) {
-    $productId = $product['product_id'];
-    $exec = $pdo->prepare('SELECT * FROM products WHERE id = :product'); // далее смотрим что за именно эти продукты (имя, фото итд)
-    $exec->execute(['product' => $productId]);
-    $result[] = $exec->fetch();
-
-}
-
-?>
 <div class="container">
     <a href='/logout'>Выход</a>
     <div>
@@ -32,9 +7,10 @@ foreach ($products as $product) {
     <div>
         <a href='/main'>Главная страница</a>
     </div>
+
     <h3>КОРЗИНА</h3>
     <div class="card-deck">
-        <?php foreach ($result as $product): ?>
+        <?php foreach ($productsInCart as $product): ?>
         <form action="/main" method="POST"></form>
         <div class="card text-center">
             <a href="#">
@@ -50,13 +26,18 @@ foreach ($products as $product) {
                     <a href="#"><h5 class="card-title"><?php echo $product['description'] ?? ''; ?></h5></a>
                 </div>
             </a>
-        </div>
+
         <!--            <input type="text" hidden placeholder="Enter product-id" name="product-id" id="product-id" value="-->
         <?php //echo $product['id']?><!--" required>-->
         <!--            <button type="submit" >Add</button>-->
+
         </form>
+
     </div>
+
     <?php endforeach; ?>
+    </div>    <a href='/buy'>Купить все содержимое в корзине</a>
+
 </div>
 
 <style>
@@ -109,6 +90,4 @@ foreach ($products as $product) {
     .card-footer {
         font-weight: bold;
         font-size: 20px;
-        background-color: white;
-    }
-</style>
+        b

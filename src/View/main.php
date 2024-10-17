@@ -1,17 +1,4 @@
-<?php
 
-session_start();
-
-if (!isset($_SESSION['userId'])){
-    header("Location: /get_login.php");
-}
-
-$pdo = new PDO("pgsql:host=postgres; port=5432; dbname=name", "user", "pwd");
-
-$exec = $pdo->query('SELECT * FROM products');
-$result = $exec->fetchAll();
-
-?>
 <div class="container">
     <a href='/logout'>ВЫХОД</a>
     <div>
