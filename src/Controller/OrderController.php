@@ -2,7 +2,7 @@
 
 namespace Controller;
 
-use Model\OrderProduct;
+use \Model\OrderProduct;
 use \Model\User;
 use \Model\Product;
 use \Model\Order;
@@ -52,64 +52,37 @@ class OrderController
         }
 
 
-        $cartProductsByUserId = $this->product->getCartUserId($userId); // получаю продукты в корзине пользователя
-
-        $productIds = [];
-        foreach ($cartProductsByUserId as $product) {
-            $productIds[] = $product['product_id']; //  вытаскиваю id продуктов пользователся
-        }
-
-        $products = [];
-        foreach ($productIds as $productId) {
-            $products[] = $this->product->getProductById($productId);
-            // получаю продукты по id с продуктов
-            // id name price images category ....
-        }
-
-        foreach ($products as &$product) {
-            foreach ($cartProductsByUserId as $cartProductByUserId) {
-                if ($cartProductByUserId['product_id'] === $product['id']) {
-                    $product['amount'] = $cartProductByUserId['amount'];
-                    $result[] = $product;
-                }
-            }
-        }
-
-        foreach ($result as $elem) {
-            $sumOneProduct[] = $elem['amount'] * $elem['price'];
-        }
-        $sumAll = 0;
-        foreach ($sumOneProduct as $sum) {
-            $sumAll += $sum;
-        }
-
+        $cartProductsByUserId = $this->cartController->getProductsUserId(); // получаю продукты в корзине пользователя
+        $productIds = $this->cartController->getIdProduct(); // вытаскиваю id продуктов пользователся
+        $products = $this->cartController->getFullInfProductInCart(); // Общая инф о товарах
+        $this->cartController->getAndAddAmount();
+        $sumAll = $this->cartController->getAllSumInCart(); //Общая сумма в коозине
 
         $addInOrder = $this->userOrder->add($contactName, $contactPhone, $address, $sumAll, $userId);
 
         $getOrderOfUserIds = $this->userOrder->getAllOfOrders($userId);
 
-        foreach ($getOrderOfUserIds as $getOrderOfUserId){
-            $orderId = $getOrderOfUserId['id'];
+
+        $arr = [];
+
+//        for ($i = 0; $i < count($productId); $i++) {
+//            foreach ($productIds as $productId) {
+//                $arr['productId'] = $productId;
+//            }
+//            foreach ($getOrderOfUserIds as $getOrderOfUserId) {
+//                $arr['orderId'] = $getOrderOfUserId['id'];
+//            }
+//            foreach ($cartProductsByUserId as $cartProductByUserId) {
+//                $arr['amount'] = $cartProductByUserId['amount'];
+//            }
+//            foreach ($products as $product) {
+//                $arr['price'] = $product['price'];
+//            }
         }
 
-        $cartProductsByUserId = $this->product->getCartUserId($userId); // получаю продукты в корзине пользователя
-
-        $productIds = [];
-        foreach ($cartProductsByUserId as $product) {
-            $productIds[] = $product['product_id']; //  вытаскиваю id продуктов пользователся
-        }
-
-        $products = [];
-        foreach ($productIds as $productId) {
-            $products[] = $this->product->getProductById($productId);
-            // получаю продукты по id с продуктов
-            // id name price images category ....
-        }
-
-
-        $this->orderProduct->addInTable($orderId, $productIds, );
-
-
+        $this->orderProduct->addInTable($arr);
+        $arr = [];
         echo 'Товар успешно заказан';
     }
 }
+

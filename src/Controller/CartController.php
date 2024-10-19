@@ -53,7 +53,6 @@ class CartController
         }
 
 
-
         $result = $this->product->getProductById($productId);
 
         if ($result === false) {
@@ -79,24 +78,51 @@ class CartController
     {
         session_start();
 
+        $this->getProductsUserId();
+        $this->getIdProduct();
+        $this->getFullInfProductInCart();
+        $this->getAndAddAmount();
+        $this->getAllSumInCart();
+        $this->getReadyView();
+    }
+
+    public function getProductsUserId(): array
+    {
         if (!isset($_SESSION['userId'])) {
             header("Location: /login");
         }
         $userId = $_SESSION['userId'];
 
-        $cartProductsByUserId = $this->product->getCartUserId($userId); // получаю продукты в корзине пользователя
+        return $cartProductsByUserId = $this->product->getCartUserId($userId); // получаю продукты в корзине пользователя
+    }
 
+    public function getIdProduct(): array
+    {
+        $cartProductsByUserId = $this->getProductsUserId();
         $productIds = [];
         foreach ($cartProductsByUserId as $product) {
             $productIds[] = $product['product_id']; //  вытаскиваю id продуктов пользователся
         }
+        return $productIds;
+    }
+
+    public function getFullInfProductInCart(): array
+    {
+        $productIds = $this->getIdProduct();
 
         $products = [];
         foreach ($productIds as $productId) {
-            $products[] = $this->product->getProductById($productId);
+             $products[] = $this->product->getProductById($productId);
             // получаю продукты по id с продуктов
             // id name price images category ....
         }
+        return $products;
+    }
+
+    public function getAndAddAmount(): array
+    {
+        $products = $this->getFullInfProductInCart();
+        $cartProductsByUserId = $this->getProductsUserId();
 
         foreach ($products as &$product) {
             foreach ($cartProductsByUserId as $cartProductByUserId) {
@@ -106,17 +132,29 @@ class CartController
                 }
             }
         }
+        return $result;
+    }
 
-        foreach ($result as $elem){
+    public function getAllSumInCart()
+    {
+        $result = $this->getAndAddAmount();
+
+        foreach ($result as $elem) {
             $sumOneProduct[] = $elem['amount'] * $elem['price'];
         }
+
         $sumAll = 0;
-        foreach ($sumOneProduct as $sum){
+        foreach ($sumOneProduct as $sum) {
             $sumAll += $sum;
         }
+        return $sumAll;
+    }
 
-        require_once './../View/cart.php';
-
+    public function getReadyView()
+    {
+        $result = $this->getAndAddAmount();
+        $sumAll = $this->getAllSumInCart();
+        return require_once './../View/cart.php';
     }
 }
 
