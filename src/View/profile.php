@@ -7,7 +7,9 @@
     <div>
         <a href='/cart'>КОРЗИНА</a>
     </div>
-
+    <div>
+        <a href='/favorite'>Избранные товары</a>
+    </div>
     <link rel="stylesheet" type="text/CSS" href="style.css"/>
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,400,300,600,700,800'
           rel='stylesheet' type='text/css'>

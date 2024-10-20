@@ -7,6 +7,9 @@
     <div>
         <a href='/cart'>КОРЗИНА</a>
     </div>
+    <div>
+        <a href='/favorite'>Избранные товары</a>
+    </div>
     <h3>КАТАЛОГ</h3>
     <div class="card-deck">
         <?php foreach ($result as $product): ?>
@@ -26,9 +29,14 @@
                 </div>
             </a>
         </div>
-        <!--            <input type="text" hidden placeholder="Enter product-id" name="product-id" id="product-id" value="-->
-        <?php //echo $product['id']?><!--" required>-->
-        <!--            <button type="submit" >Add</button>-->
+        <form action="/add-product" method="POST">
+            <input type="hidden" id="product_id" name="product_id" value="<?= $product['id']?>" required>
+
+            <input type="text" placeholder="Введите колическтво" id="amount" name="amount" required>
+            <label style="color: red"> <?php print_r($errors['amount'] ?? '');?> </label>
+
+            <button type="submit">в корзину</button>
+        </form>
         </form>
     </div>
     <?php endforeach; ?>

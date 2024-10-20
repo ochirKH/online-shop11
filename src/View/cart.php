@@ -7,6 +7,9 @@
     <div>
         <a href='/main'>Главная страница</a>
     </div>
+    <div>
+        <a href='/favorite'>Избранные товары</a>
+    </div>
 
     <h3>КОРЗИНА</h3>
     <div class="card-deck">

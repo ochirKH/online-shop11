@@ -51,38 +51,75 @@ class OrderController
             $address = $_POST['address'];
         }
 
+        $cartProductsByUserId = $this->product->getCartUserId($userId); // получаю продукты в корзине пользователя
 
-        $cartProductsByUserId = $this->cartController->getProductsUserId(); // получаю продукты в корзине пользователя
-        $productIds = $this->cartController->getIdProduct(); // вытаскиваю id продуктов пользователся
-        $products = $this->cartController->getFullInfProductInCart(); // Общая инф о товарах
-        $this->cartController->getAndAddAmount();
-        $sumAll = $this->cartController->getAllSumInCart(); //Общая сумма в коозине
+        $productIds = [];
+        foreach ($cartProductsByUserId as $product) {
+            $productIds[] = $product['product_id']; //  вытаскиваю id продуктов пользователся
+        }
+
+        $products = [];
+        foreach ($productIds as $productId) {
+            $products[] = $this->product->getProductById($productId);
+            // получаю продукты по id с продуктов
+            // id name price images category ....
+        }
+
+        foreach ($products as &$product) {
+            foreach ($cartProductsByUserId as $cartProductByUserId) {
+                if ($cartProductByUserId['product_id'] === $product['id']) {
+                    $product['amount'] = $cartProductByUserId['amount'];
+                    $result[] = $product;
+                }
+            }
+        }
+
+        foreach ($result as $elem) {
+            $sumOneProduct[] = $elem['amount'] * $elem['price'];
+        }
+
+        $sumAll = 0;
+        foreach ($sumOneProduct as $sum) {
+            $sumAll += $sum;
+        }
+
 
         $addInOrder = $this->userOrder->add($contactName, $contactPhone, $address, $sumAll, $userId);
 
-        $getOrderOfUserIds = $this->userOrder->getAllOfOrders($userId);
-
 
         $arr = [];
 
-//        for ($i = 0; $i < count($productId); $i++) {
-//            foreach ($productIds as $productId) {
-//                $arr['productId'] = $productId;
-//            }
-//            foreach ($getOrderOfUserIds as $getOrderOfUserId) {
-//                $arr['orderId'] = $getOrderOfUserId['id'];
-//            }
-//            foreach ($cartProductsByUserId as $cartProductByUserId) {
-//                $arr['amount'] = $cartProductByUserId['amount'];
-//            }
-//            foreach ($products as $product) {
-//                $arr['price'] = $product['price'];
-//            }
+        $getAllOfOrders = $this->userOrder->getAllOfOrders($userId);
+
+        foreach ($getAllOfOrders as $getAllOfOrder){
+            $arr['orderId'] = $getAllOfOrder['id'];
+        }
+
+        foreach ($products as $product){
+            $arr['price'] = $product['price'];
+        }
+
+        foreach ($productIds as $productId) {
+            $arr['productId'] = $productId;
+        }
+
+        foreach ($cartProductsByUserId as $product) {
+            $arr['amount'] = $product['amount'];
         }
 
         $this->orderProduct->addInTable($arr);
-        $arr = [];
-        echo 'Товар успешно заказан';
+
+//        $arr['orderId'] = $this->userOrder->getAllOfOrders($userId);
+//        $arr['productId'] = $cartProductByUserId['product_id'];
+//        $arr['amount'] = $cartProductByUserId['amount'];
+//        $arr['price'] = $product['sum'];
+//        $this->orderProduct->addInTable($arr);
+
+        var_dump($arr);
+
+
+
+//        echo 'Товар успешно заказан';
     }
 }
 
