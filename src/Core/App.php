@@ -2,11 +2,6 @@
 
 namespace Core;
 
-use Controller\CartController;
-use Controller\FavoriteController;
-use Controller\OrderController;
-use Controller\ProductController;
-use Controller\UserController;
 
 class App
 {

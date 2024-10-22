@@ -55,7 +55,7 @@ class CartController
 
         $result = $this->product->getProductById($productId);
 
-        if ($result === false) {
+        if ($result === null) {
             exit('Такого товара не существует');
         }
 
@@ -83,38 +83,44 @@ class CartController
         }
         $userId = $_SESSION['userId'];
 
-        $cartProductsByUserId = $this->product->getCartUserId($userId); // получаю продукты в корзине пользователя
+        $cartProductsByUserId = $this->userProduct->getCartUserId($userId); // получаю продукты в корзине пользователя
 
-        $productIds = [];
-        foreach ($cartProductsByUserId as $product) {
-            $productIds[] = $product['product_id']; //  вытаскиваю id продуктов пользователся
-        }
+        if ($cartProductsByUserId !== []) {
 
-        $products = [];
-        foreach ($productIds as $productId) {
-             $products[] = $this->product->getProductById($productId);
-            // получаю продукты по id с продуктов
-            // id name price images category ....
-        }
+            $productIds = [];
+            foreach ($cartProductsByUserId as $product) {
+                $productIds[] = $product['product_id']; //  вытаскиваю id продуктов пользователся
+            }
 
-        foreach ($products as &$product) {
-            foreach ($cartProductsByUserId as $cartProductByUserId) {
-                if ($cartProductByUserId['product_id'] === $product['id']) {
-                    $product['amount'] = $cartProductByUserId['amount'];
-                    $result[] = $product;
+            $products = [];
+            foreach ($productIds as $productId) {
+                $products[] = $this->product->getProductById($productId);
+                // получаю продукты по id с продуктов
+                // id name price images category ....
+            }
+
+            foreach ($products as &$product) {
+                foreach ($cartProductsByUserId as $cartProductByUserId) {
+                    if ($cartProductByUserId['product_id'] === $product->getId()) {
+                        $product['amount'] = $cartProductByUserId['amount'];
+                        $result[] = $product;
+                    }
                 }
             }
-        }
 
-        foreach ($result as $elem) {
-            $sumOneProduct[] = $elem['amount'] * $elem['price'];
-        }
+            foreach ($result as $elem) {
+                $sumOneProduct[] = $elem['amount'] * $elem->getPrice();
+            }
 
-        $sumAll = 0;
-        foreach ($sumOneProduct as $sum) {
-            $sumAll += $sum;
-        }
+            $sumAll = 0;
+            foreach ($sumOneProduct as $sum) {
+                $sumAll += $sum;
+            }
 
+            require_once './../View/cart.php';
+
+        }
+        $result = [];
         require_once './../View/cart.php';
     }
 }

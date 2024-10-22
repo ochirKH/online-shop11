@@ -4,9 +4,10 @@ namespace Model;
 
 class OrderProduct extends Model
 {
-    public function addInTable (array $arr )
+    public function addInTable (int $id, array $product ): void
     {
-        $stmt = $this->pdo->prepare('INSERT INTO order_products (order_id, product_id, amount, price) VALUES (:orderId, :productId, :amount, :price)');
-        $result = $stmt->execute(['orderId'=>$arr['orderId'],'productId'=>$arr['productId'],'amount'=>$arr['amount'],'price'=>$arr['price']]);
+        $stmt = $this->pdo->prepare('INSERT INTO order_products (order_id, product_id, amount, price) 
+VALUES (:orderId, :productId, :amount, :price)');
+        $result = $stmt->execute(['orderId'=>$id,'productId'=>$product['id'],'amount'=>$product['amount'],'price'=>$product['price']]);
     }
 }

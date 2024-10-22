@@ -77,14 +77,14 @@ class UserController
         $user = $this->user->checkUserEmail($email);
 
 
-        if ($user === false) {
+        if ($user === null) {
             $errors['email'] = 'Пароль или логин указан не верно!';
         } else {
-            $passwordFromDb = $user['password'];
+            $passwordFromDb = $user->getPassword();
             if (password_verify($password, $passwordFromDb)) {
                 session_start();
-                $_SESSION['userId'] = $user['id'];
-                $_SESSION['userName'] = $user['name'];
+                $_SESSION['userId'] = $user->getId();
+                $_SESSION['userName'] = $user->getName();
                 header('Location: /main');
             } else {
                 $errors['email'] = 'Пароль или логин указан не верно!';

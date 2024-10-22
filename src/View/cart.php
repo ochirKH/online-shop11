@@ -34,8 +34,11 @@
     </div>
 
     <?php endforeach; ?>
-        <p><b><?php echo 'Обшая сумма в корзине ' . $sumAll . ' рублей';  ?></b></p>
+        <p><b><?php if (isset($sumAll)) {
+                    echo 'Обшая сумма в корзине ' . $sumAll . ' рублей'; ?></b></p>
     </div>    <a href='/buy'>Купить все содержимое в корзине</a>
+    <?php }?>
+
 
 </div>
 

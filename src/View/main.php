@@ -17,20 +17,20 @@
         <div class="card text-center">
             <a href="#">
                 <div class="card-header">
-                    <?php echo $product['name']; ?>
+                    <?php echo $product->getName(); ?>
                 </div>
                 <div class="card-footer">
-                    <?php echo $product['price']; ?> рублей
+                    <?php echo $product->getPrice(); ?> рублей
                 </div>
-                <img class="card-img-top" src=<?php echo $product['images'] ?> width="500" alt="Card image">
+                <img class="card-img-top" src=<?php echo $product->getImages() ?> width="500" alt="Card image">
                 <div class="card-body">
-                    <p class="card-text text-muted"> <?php echo $product['category']; ?></p>
-                    <a href="#"><h5 class="card-title"><?php echo $product['description']; ?></h5></a>
+                    <p class="card-text text-muted"> <?php echo $product->getCategory(); ?></p>
+                    <a href="#"><h5 class="card-title"><?php echo $product->getDescription(); ?></h5></a>
                 </div>
             </a>
         </div>
         <form action="/add-product" method="POST">
-            <input type="hidden" id="product_id" name="product_id" value="<?= $product['id']?>" required>
+            <input type="hidden" id="product-id" name="product-id" value="<?= $product->getId()?>" required>
 
             <input type="text" placeholder="Введите колическтво" id="amount" name="amount" required>
             <label style="color: red"> <?php print_r($errors['amount'] ?? '');?> </label>

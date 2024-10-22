@@ -23,10 +23,31 @@ class UserProduct extends Model
         }
     }
 
+    public function getCartUserId(int $userId): array
+    {
+        $exec = $this->pdo->prepare('SELECT * FROM user_products WHERE user_id = :user');
+        // вытаскиваю Id продуктов у пользователя
+
+        $exec->execute(['user' => $userId]);
+        return $products = $exec->fetchAll();
+
+//        $cartId = [];
+//        foreach ($products as $product){
+//            $cartId = $this->hydrate($product);
+//        }
+//        return $cartId;
+    }
+
     public function updateAmount(int $user, int $product, int $amount): array|false
     {
         $stmt = $this->pdo->prepare("UPDATE user_products SET amount = :amount WHERE user_id = :user AND product_id = :product");
         $stmt->execute(['user' => $user, 'product' => $product, 'amount' => $amount]);
         return $stmt->fetchAll();
+    }
+
+    public function deleteProduct(int $user)
+    {
+        $stmt = $this->pdo->prepare( "DELETE FROM user_products WHERE user_id = :user_id");
+        $stmt->execute(['user_id' => $user]);
     }
 }

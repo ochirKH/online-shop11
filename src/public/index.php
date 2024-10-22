@@ -1,24 +1,18 @@
 <?php
 
+require_once './../Core/Autoload.php';
+
 use Controller\CartController;
 use Controller\FavoriteController;
 use Controller\OrderController;
 use Controller\ProductController;
 use Controller\UserController;
+use Core\Autoload;
+use Core\App;
 
-$autoload = function ($className) {
-    $path = str_replace('\\', '/', $className);
-    $path = "./../$path.php";
-    if (file_exists($path)) {
-        require_once $path;
-        return true;
-    }
-    return false;
-};
+Autoload::registrate("/var/www/html/src/");
 
-spl_autoload_register($autoload);
-
-$app = new \Core\App();
+$app = new App();
 
 $app->createRoute('/login', 'GET', UserController::class, 'getLogin');
 $app->createRoute('/login', 'POST', UserController::class,'login');
