@@ -1,11 +1,11 @@
 <html>
 <head>
-    <a href='/logout'>ВЫХОД</a>
+    <a href='/logout'>Выход</a>
     <div>
-        <a href='/profile'>ЛИЧНЫЙ КАБИНЕТ</a>
+        <a href='/main'>Каталог</a>
     </div>
     <div>
-        <a href='/cart'>КОРЗИНА</a>
+        <a href='/cart'>Корзина</a>
     </div>
     <div>
         <a href='/favorite'>Избранные товары</a>

@@ -32,45 +32,72 @@ class CartController
         }
     }
 
-    public function addProductsInCart(): void
+    public function addProduct(): void
     {
         session_start();
-
-        if (isset($_SESSION['userId'])) {
-            $userId = $_SESSION['userId'];
+        if (!isset($_SESSION['userId'])) {
+            header('Location: /login');
         }
+
+        $errors[] = $this->validateInAddProduct();
+
+        if (empty($errors)) {
+
+            $productId = $_POST['product-id'];
+            $amount = $_POST['amount'];
+            $userId = $_POST['userId'];
+
+            // Проверка у пользователя  таких продуктов
+            $result = $this->userProduct->getByUserIdAndProductId($userId, $productId);
+
+            if ($result === null) { // Если товара нет в корзине, то создаем новый
+                $this->userProduct->addProduct($userId, $productId, $amount);
+                // Добавляю в корзину товар и количество
+            } else {
+                $this->userProduct->updateAmount($userId, $productId, $result['amount'] + $amount);
+                //если товар уже есть такой, то меняе количество
+            }
+
+            header("Location: /main");
+
+        }
+        echo 'Такого товара в каталоге нет';
+    }
+
+    public function validateInAddProduct(): array
+    {
+        $errors = [];
+
         if (isset($_POST['product-id'])) {
             $productId = $_POST['product-id'];
+
+            $product = $this->product->getProductById($productId);
+
+            if ($product === null) {
+                $errors['product-id'] = 'продукта с таки ID не существует';
+            } elseif (empty($productId)) {
+                $errors['product-id'] = 'поле продукта не должен быть пустым';
+            } elseif ($productId < 0) {
+                $errors['product-id'] = 'поле продукта id не должен быть отрицательным';
+            } elseif (!is_numeric($productId)) {
+                $errors['product-id'] = 'Такого товара не существует';
+            }
+        } else {
+            $errors['product-id'] = 'id продукта должен быть указан';
         }
         if (isset($_POST['amount'])) {
             $amount = $_POST['amount'];
-        }
-        if (!is_numeric($amount)) {
-            exit('Такой цифры не существует');
-        }
-        if (!is_numeric($productId)) {
-            exit('Такого товара не существует');
-        }
-
-
-        $result = $this->product->getProductById($productId);
-
-        if ($result === null) {
-            exit('Такого товара не существует');
-        }
-
-        // Проверка у пользователя  таких продуктов
-        $result = $this->userProduct->checkProductsAndUser($userId, $productId);
-
-        if ($result === null) { // Если товара нет в корзине, то создаем новый
-            $this->userProduct->addProductandAmount($userId, $productId, $amount);
-            // Добавляю в корзину товар и количество
+            if (empty('amount')) {
+                $errors['amount'] = 'поле количества не должен быть пустым';
+            } elseif ($amount < 0) {
+                $errors['amount'] = 'поле количества не должен быть отрицательным';
+            } elseif (!is_numeric($amount)) {
+                $errors['amount'] = 'Такой цифры не существует';
+            }
         } else {
-            $this->userProduct->updateAmount($userId, $productId, $result['amount'] + $amount);
-            //если товар уже есть такой, то меняе количество
+            $errors['amount'] = 'укажите количетсво  товара';
         }
-
-        header("Location: /main");
+        return $errors;
     }
 
 
@@ -83,7 +110,7 @@ class CartController
         }
         $userId = $_SESSION['userId'];
 
-        $cartProductsByUserId = $this->userProduct->getCartUserId($userId); // получаю продукты в корзине пользователя
+        $cartProductsByUserId = $this->userProduct->getByUserId($userId); // получаю продукты в корзине пользователя
 
         if ($cartProductsByUserId !== []) {
 

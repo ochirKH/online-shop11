@@ -8,13 +8,13 @@ class User extends Model
     private string $email;
     private string $password;
 
-    public function addUserBd(int $name, string $email, string $password): void
+    public function add(int $name, string $email, string $password): void
     {
         $stmt = $this->pdo->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
         $stmt->execute(['name' => $name, 'email' => $email, 'password' => $password]);
     }
 
-    public function checkUserEmail(string $email): User|null
+    public function getByEmail (string $email): User|null
     {
         // В БД ищем пользователя по почте т.к почта уникальная
 
@@ -30,7 +30,7 @@ class User extends Model
     }
 
 
-    public function checkUserId(int $userId): User|null
+    public function getById (int $userId): User|null
     {
 
         $stmt = $this->pdo->prepare('SELECT * FROM users WHERE id = :userId');

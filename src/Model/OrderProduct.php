@@ -4,7 +4,7 @@ namespace Model;
 
 class OrderProduct extends Model
 {
-    public function addInTable (int $id, array $product ): void
+    public function add (int $id, array $product ): void
     {
         $stmt = $this->pdo->prepare('INSERT INTO order_products (order_id, product_id, amount, price) 
 VALUES (:orderId, :productId, :amount, :price)');
