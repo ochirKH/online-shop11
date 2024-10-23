@@ -33,8 +33,21 @@ VALUES (:name, :phone, :address, :sum, :user_id) returning id');
         $result = [];
 
         foreach ($data as $elem) {
-            $result[] = $this->hydrate($elem);
+
+            $user = new User();
+            $userFromUser = $user->getId($elem['user_id']);
+
+            $obj = new self();
+            $obj->id = $data['id'];
+            $obj->contactName = $data['contact_name'];
+            $obj->contactPhone = $data['contact_phone'];
+            $obj->address = $data['address'];
+            $obj->sum = $data['sum'];
+            $obj->user = $userFromUser;
+
+            $result = $obj;
         }
+
         return $result;
     }
 
@@ -46,7 +59,8 @@ VALUES (:name, :phone, :address, :sum, :user_id) returning id');
         $obj->contactPhone = $data['contact_phone'];
         $obj->address = $data['address'];
         $obj->sum = $data['sum'];
-        $obj->user = $data['user'];
+        $obj->user = $userFromUser;
+
 
         return $obj;
     }
