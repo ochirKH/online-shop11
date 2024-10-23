@@ -1,13 +1,15 @@
 <html>
 <head>
-    <a href='/logout'>ВЫХОД</a>
+    <a href='/logout'>Выход</a>
     <div>
-        <a href='/profile'>ЛИЧНЫЙ КАБИНЕТ</a>
+        <a href='/main'>Каталог</a>
     </div>
     <div>
-        <a href='/cart'>КОРЗИНА</a>
+        <a href='/cart'>Корзина</a>
     </div>
-
+    <div>
+        <a href='/favorite'>Избранные товары</a>
+    </div>
     <link rel="stylesheet" type="text/CSS" href="style.css"/>
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,400,300,600,700,800'
           rel='stylesheet' type='text/css'>
@@ -29,13 +31,13 @@
         </div>
         <div class="right_col">
             <h2 class="name">
-                <?php echo $user['name']?? ''; ?>
+                <?php echo $user->getName() ?? ''; ?>
             </h2>
             <h3 class="location">San Francisco, CA</h3>
             <ul class="contact_information">
                 <li class="work">CEO</li>
                 <li class="website"><a class="nostyle" href="#">www.apple.com</a></li>
-                <li class="mail"><?php echo $user['email']?? '';?>
+                <li class="mail"><?php echo $user->getEmail()?? '';?>
                 <li class="phone">1-(732)-757-2923</li>
                 <li class="resume"><a href="#" class="nostyle">download resume</a></li>
             </ul>

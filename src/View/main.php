@@ -1,11 +1,14 @@
 
 <div class="container">
-    <a href='/logout'>ВЫХОД</a>
+    <a href='/logout'>Выход</a>
     <div>
-        <a href='/profile'>ЛИЧНЫЙ КАБИНЕТ</a>
+        <a href='/profile'>Личный кабинет</a>
     </div>
     <div>
-        <a href='/cart'>КОРЗИНА</a>
+        <a href='/cart'>Корзинка</a>
+    </div>
+    <div>
+        <a href='/favorite'>Избранные товары</a>
     </div>
     <h3>КАТАЛОГ</h3>
     <div class="card-deck">
@@ -14,21 +17,26 @@
         <div class="card text-center">
             <a href="#">
                 <div class="card-header">
-                    <?php echo $product['name']; ?>
+                    <?php echo $product->getName(); ?>
                 </div>
                 <div class="card-footer">
-                    <?php echo $product['price']; ?> рублей
+                    <?php echo $product->getPrice(); ?> рублей
                 </div>
-                <img class="card-img-top" src=<?php echo $product['images'] ?> width="500" alt="Card image">
+                <img class="card-img-top" src=<?php echo $product->getImages() ?> width="500" alt="Card image">
                 <div class="card-body">
-                    <p class="card-text text-muted"> <?php echo $product['category']; ?></p>
-                    <a href="#"><h5 class="card-title"><?php echo $product['description']; ?></h5></a>
+                    <p class="card-text text-muted"> <?php echo $product->getCategory(); ?></p>
+                    <a href="#"><h5 class="card-title"><?php echo $product->getDescription(); ?></h5></a>
                 </div>
             </a>
         </div>
-        <!--            <input type="text" hidden placeholder="Enter product-id" name="product-id" id="product-id" value="-->
-        <?php //echo $product['id']?><!--" required>-->
-        <!--            <button type="submit" >Add</button>-->
+        <form action="/add-product" method="POST">
+            <input type="hidden" id="product-id" name="product-id" value="<?= $product->getId()?>" required>
+
+            <input type="text" placeholder="Введите колическтво" id="amount" name="amount" required>
+            <label style="color: red"> <?php print_r($errors['amount'] ?? '');?> </label>
+
+            <button type="submit">в корзину</button>
+        </form>
         </form>
     </div>
     <?php endforeach; ?>

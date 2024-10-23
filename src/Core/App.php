@@ -2,78 +2,10 @@
 
 namespace Core;
 
-use Controller\CartController;
-use Controller\ProductController;
-use Controller\UserController;
 
 class App
 {
-    private array $routes = [
-        '/login' => [
-            'GET' => [
-                'class' => UserController::class, // UserController::class это тоже самое как и '/Controller/UserController'
-                'method' => 'getLogin',
-            ],
-            'POST' => [
-                'class' => UserController::class,
-                'method' => 'login',
-            ]
-        ],
-        '/registration' => [
-            'GET' => [
-                'class' => UserController::class,
-                'method' => 'getRegistration',
-            ],
-            'POST' => [
-                'class' => UserController::class,
-                'method' => 'registration',
-            ]
-        ],
-        '/main' => [
-            'GET' => [
-                'class' => ProductController::class,
-                'method' => 'getAll',
-            ],
-        ],
-        '/add-product' => [
-            'GET' => [
-                'class' => UserController::class,
-                'method' => 'getAddProduct',
-            ],
-            'POST' => [
-                'class' => UserController::class,
-                'method' => 'addProductsInCart',
-            ]
-        ],
-        '/cart' => [
-            'GET' => [
-                'class' => CartController::class,
-                'method' => 'checkCart',
-            ],
-        ],
-        '/logout' => [
-            'GET' => [
-                'class' => UserController::class,
-                'method' => 'logout',
-            ],
-        ],
-        '/profile' => [
-            'GET' => [
-                'class' => UserController::class,
-                'method' => 'myProfile',
-            ],
-        ],
-        '/buy' => [
-            'GET' => [
-                'class' => UserController::class,
-                'method' => 'getBuy',
-            ],
-            'POST' => [
-                'class' => UserController::class,
-                'method' => 'buy',
-            ]
-        ],
-    ];
+    private array $routes = [];
 
     public function run(): void
     {
@@ -99,5 +31,13 @@ class App
             http_response_code(404);
             require_once './../View/404.php';
         }
+    }
+
+    public function createRoute(string $route, string $method, string $className, string $methodName): void
+    {
+        $this->routes[$route][$method] = [
+            'class' => $className,
+            'method' => $methodName
+        ];
     }
 }

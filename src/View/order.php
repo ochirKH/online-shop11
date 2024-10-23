@@ -2,9 +2,17 @@
     <div class="container">
         <h1>Оформление заказа</h1>
 
+        <label for="name"><b>Контактное имя</b></label>
+        <label style='color: red'> <?php echo($errors['name']) ?? null;?> </label>
+        <input type="text" placeholder="Enter contact-name" name="contact-name" id="contact-name" required>
+
+        <label for="name"><b>Контактный телефон</b></label>
+        <label style='color: red'> <?php echo($errors['name']) ?? null;?> </label>
+        <input type="text" placeholder="Enter contact-phone" name="contact-phone" id="contact-phone" required>
+
         <label for="name"><b>Адрес доставки</b></label>
         <label style='color: red'> <?php echo($errors['name']) ?? null;?> </label>
-        <input type="text" placeholder="Enter delivery-address" name="delivery-address" id="delivery-address" required>
+        <input type="text" placeholder="Enter address" name="address" id="address" required>
 
 
         <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
