@@ -18,13 +18,13 @@ class UserProduct extends Model
     {
         $stmt = $this->pdo->prepare('SELECT * FROM user_products WHERE user_id = :user AND product_id = :product');
         $stmt->execute(['user' => $userId, 'product' => $productId]);
-        $result = $stmt->fetch();
+        $userProduct = $stmt->fetch();
 
-        if ($result === false) {
+        if ($userProduct === false) {
             return $result = null;
         }
 
-        $data = $this->hydrate($result);
+        $data = $this->hydrate($userProduct);
         return $data;
     }
 
@@ -34,21 +34,14 @@ class UserProduct extends Model
         // вытаскиваю Id продуктов у пользователя
 
         $exec->execute(['user' => $userId]);
-        return $products = $exec->fetchAll();
+        $userProducts = $exec->fetchAll();
 
-        $cartId = [];
+        $data = [];
 
-        foreach ($products as $product){
-
-            $user = new User();
-            $userFromDb = $user->getById($product['user_id']);
-
-            $product = new Product();
-            $productFromDb = $product->getProductById($product['product_id']);
-
-            $cartId[] = $this->hydrate($product);
+        foreach ($userProducts as $userProduct){
+            $data[] = $this->hydrate($userProduct);
         }
-        return $cartId;
+        return $data;
     }
 
 
@@ -64,8 +57,14 @@ class UserProduct extends Model
         $stmt->execute(['user_id' => $user]);
     }
 
-    function hydrate($data)
+    function hydrate(array $data)
     {
+        $user = new User();
+        $userFromDb = $user->getById($data['user_id']);
+
+        $product = new Product();
+        $productFromDb = $product->getProductById($data['product_id']);
+
         $obj = new self();
 
         $obj->id = $data['id'];
@@ -74,5 +73,25 @@ class UserProduct extends Model
         $obj->amount = $data['amount'];
 
         return $obj;
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function getProduct(): Product
+    {
+        return $this->product;
+    }
+
+    public function getAmount(): int
+    {
+        return $this->amount;
     }
 }

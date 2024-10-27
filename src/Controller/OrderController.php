@@ -51,31 +51,32 @@ class OrderController
 
             $cartProductsByUserId = $this->userProduct->getByUserId($userId); // получаю продукты в корзине пользователя
 
-            $productIds = [];
-            foreach ($cartProductsByUserId as $product) {
-                $productIds[] = $product['product_id']; //  вытаскиваю id продуктов пользователся
-            }
+//            $productIds = [];
+//            foreach ($cartProductsByUserId as $product) {
+//                $productIds[] = $product['product_id']; //  вытаскиваю id продуктов пользователся
+//            }
+//
+//            $products = [];
+//            foreach ($productIds as $productId) {
+//                $products[] = $this->product->getProductById($productId);
+//                // получаю продукты по id с продуктов
+//                // id name price images category ....
+//            }
+//
+//            $result = [];
+//
+//            foreach ($products as &$product) {
+//                foreach ($cartProductsByUserId as $cartProductByUserId) {
+//                    if ($cartProductByUserId['product_id'] === $product->getId()) {
+//                        $product['amount'] = $cartProductByUserId['amount'];
+//                        $result[] = $product;
+//                    }
+//                }
+//            }
+            $sumOneProduct = [];
 
-            $products = [];
-            foreach ($productIds as $productId) {
-                $products[] = $this->product->getProductById($productId);
-                // получаю продукты по id с продуктов
-                // id name price images category ....
-            }
-
-            $result = [];
-
-            foreach ($products as &$product) {
-                foreach ($cartProductsByUserId as $cartProductByUserId) {
-                    if ($cartProductByUserId['product_id'] === $product->getId()) {
-                        $product['amount'] = $cartProductByUserId['amount'];
-                        $result[] = $product;
-                    }
-                }
-            }
-
-            foreach ($result as $elem) {
-                $sumOneProduct[] = $elem['amount'] * $elem->getPrice();
+            foreach ($cartProductsByUserId as $elem) {
+                $sumOneProduct[] = $elem->getProduct()->getAmount() * $elem->getProduct()->getPrice();
             }
 
             $sumAll = 0;
@@ -86,7 +87,7 @@ class OrderController
             $orderId = $this->userOrder->add($contactName, $contactPhone, $address, $sumAll, $userId); // id
 
 
-            foreach ($result as $product) {
+            foreach ($cartProductsByUserIdas->getAmount() as  $product) {
                 $this->orderProduct->add($orderId, $product);
             }
 

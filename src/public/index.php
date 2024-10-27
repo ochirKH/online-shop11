@@ -20,8 +20,8 @@ $app->createRoute('/login', 'POST', UserController::class,'login');
 $app->createRoute('/registration', 'GET', UserController::class, 'getRegistration');
 $app->createRoute('/registration', 'POST', UserController::class, 'registration');
 
-$app->createRoute('/buy', 'GET', OrderController::class, 'getBuy');
-$app->createRoute('/buy', 'POST', OrderController::class, 'buy');
+$app->createRoute('/buy', 'GET', OrderController::class, 'getOrder');
+$app->createRoute('/buy', 'POST', OrderController::class, 'order');
 
 $app->createRoute('/add-product', 'GET', CartController::class, 'getAddProduct');
 $app->createRoute('/add-product', 'POST', CartController::class, 'addProductsInCart');

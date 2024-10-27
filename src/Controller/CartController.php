@@ -45,7 +45,7 @@ class CartController
 
             $productId = $_POST['product-id'];
             $amount = $_POST['amount'];
-            $userId = $_POST['userId'];
+            $userId = $_SESSION['userId'];
 
             // Проверка у пользователя  таких продуктов
             $userProducts = $this->userProduct->getByUserIdAndProductId($userId, $productId);
@@ -73,14 +73,14 @@ class CartController
 
             $product = $this->product->getProductById($productId);
 
-            if ($product === null) {
-                $errors['product-id'] = 'продукта с таким ID не существует';
-            } elseif (empty($productId)) {
+            if (empty($productId)) {
                 $errors['product-id'] = 'поле продукта не должен быть пустым';
+            } elseif (!is_numeric($productId)) {
+                $errors['product-id'] = 'такого товара не существует';
             } elseif ($productId < 0) {
                 $errors['product-id'] = 'поле продукта id не должен быть отрицательным';
-            } elseif (!is_numeric($productId)) {
-                $errors['product-id'] = 'Такого товара не существует';
+            } elseif ($product->getId() === null) {
+                $errors['product-id'] = 'продукта с таки ID не существует';
             }
         } else {
             $errors['product-id'] = 'id продукта должен быть указан';
@@ -89,10 +89,10 @@ class CartController
             $amount = $_POST['amount'];
             if (empty('amount')) {
                 $errors['amount'] = 'поле количества не должен быть пустым';
-            } elseif ($amount < 0) {
-                $errors['amount'] = 'поле количества не должен быть отрицательным';
             } elseif (!is_numeric($amount)) {
                 $errors['amount'] = 'Такой цифры не существует';
+            } elseif ($amount < 0) {
+                $errors['amount'] = 'поле количества не должен быть отрицательным';
             }
         } else {
             $errors['amount'] = 'укажите количетсво  товара';
@@ -114,29 +114,30 @@ class CartController
 
         if ($cartProductsByUserId !== []) {
 
-            $productIds = [];
-            foreach ($cartProductsByUserId as $product) {
-                $productIds[] = $product['product_id']; //  вытаскиваю id продуктов пользователся
-            }
+//            $productIds = [];
+//            foreach ($cartProductsByUserId as $product) {
+//                $productIds[] = $product['product_id']; //  вытаскиваю id продуктов пользователся
+//            }
+//
+//            $products = [];
+//            foreach ($productIds as $productId) {
+//                $products[] = $this->product->getProductById($productId);
+//                // получаю продукты по id с продуктов
+//                // id name price images category ....
+//            }
+//
+//            foreach ($products as &$product) {
+//                foreach ($cartProductsByUserId as $cartProductByUserId) {
+//                    if ($cartProductByUserId['product_id'] === $product->getId()) {
+//                        $product['amount'] = $cartProductByUserId['amount'];
+//                        $result[] = $product;
+//                    }
+//                }
+//            }
+            $sumOneProduct = [];
 
-            $products = [];
-            foreach ($productIds as $productId) {
-                $products[] = $this->product->getProductById($productId);
-                // получаю продукты по id с продуктов
-                // id name price images category ....
-            }
-
-            foreach ($products as &$product) {
-                foreach ($cartProductsByUserId as $cartProductByUserId) {
-                    if ($cartProductByUserId['product_id'] === $product->getId()) {
-                        $product['amount'] = $cartProductByUserId['amount'];
-                        $result[] = $product;
-                    }
-                }
-            }
-
-            foreach ($result as $elem) {
-                $sumOneProduct[] = $elem['amount'] * $elem->getPrice();
+            foreach ($cartProductsByUserId as $elem) {
+                $sumOneProduct[] = $elem->getAmount() * $elem->getProduct()->getPrice();
             }
 
             $sumAll = 0;

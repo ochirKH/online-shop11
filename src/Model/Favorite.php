@@ -68,4 +68,19 @@ class Favorite extends Model
 
         return $obj;
     }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function getProduct(): Product
+    {
+        return $this->product;
+    }
 }
