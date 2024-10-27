@@ -24,7 +24,7 @@ VALUES (:name, :phone, :address, :sum, :user_id) returning id');
         return $this->hydrate($data);
     }
 
-    public function getAllOfOrders($userId): array
+    public function getById(int $userId): array
     {
         $stmt = $this->pdo->prepare('SELECT * FROM orders WHERE user_id = :userId');
         $stmt->execute(['userId' => $userId]);
@@ -35,15 +35,9 @@ VALUES (:name, :phone, :address, :sum, :user_id) returning id');
         foreach ($data as $elem) {
 
             $user = new User();
-            $userFromUser = $user->getId($elem['user_id']);
+            $userFromUser = $user->getById($elem['user_id']);
 
-            $obj = new self();
-            $obj->id = $data['id'];
-            $obj->contactName = $data['contact_name'];
-            $obj->contactPhone = $data['contact_phone'];
-            $obj->address = $data['address'];
-            $obj->sum = $data['sum'];
-            $obj->user = $userFromUser;
+            $obj = $this->hydrate($elem);
 
             $result = $obj;
         }
@@ -54,13 +48,13 @@ VALUES (:name, :phone, :address, :sum, :user_id) returning id');
     private function hydrate($data): Order
     {
         $obj = new self();
+
         $obj->id = $data['id'];
         $obj->contactName = $data['contact_name'];
         $obj->contactPhone = $data['contact_phone'];
         $obj->address = $data['address'];
         $obj->sum = $data['sum'];
         $obj->user = $userFromUser;
-
 
         return $obj;
     }

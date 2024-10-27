@@ -43,7 +43,7 @@ class FavoriteController
             header('Location: /login');
         }
 
-        $errors = $this->validateFavorite();
+        $errors = $this->validate();
 
         if (empty($errors)) {
 
@@ -62,9 +62,10 @@ class FavoriteController
 
     }
 
-    public function checkFavorite()
+    public function getProduct()
     {
         session_start();
+
 
         if (!isset($_SESSION['userId'])) {
             header('Location: /login');
@@ -87,7 +88,7 @@ class FavoriteController
 
     }
 
-    private function validateFavorite(): array
+    private function validate(): array
     {
         $errors = [];
 

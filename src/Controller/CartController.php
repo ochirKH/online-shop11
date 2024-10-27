@@ -48,13 +48,13 @@ class CartController
             $userId = $_POST['userId'];
 
             // Проверка у пользователя  таких продуктов
-            $result = $this->userProduct->getByUserIdAndProductId($userId, $productId);
+            $userProducts = $this->userProduct->getByUserIdAndProductId($userId, $productId);
 
-            if ($result === null) { // Если товара нет в корзине, то создаем новый
+            if ($userProducts === null) { // Если товара нет в корзине, то создаем новый
                 $this->userProduct->addProduct($userId, $productId, $amount);
                 // Добавляю в корзину товар и количество
             } else {
-                $this->userProduct->updateAmount($userId, $productId, $result['amount'] + $amount);
+                $this->userProduct->updateAmount($userId, $productId, $userProducts['amount'] + $amount);
                 //если товар уже есть такой, то меняе количество
             }
 
@@ -74,7 +74,7 @@ class CartController
             $product = $this->product->getProductById($productId);
 
             if ($product === null) {
-                $errors['product-id'] = 'продукта с таки ID не существует';
+                $errors['product-id'] = 'продукта с таким ID не существует';
             } elseif (empty($productId)) {
                 $errors['product-id'] = 'поле продукта не должен быть пустым';
             } elseif ($productId < 0) {
@@ -110,7 +110,7 @@ class CartController
         }
         $userId = $_SESSION['userId'];
 
-        $cartProductsByUserId = $this->userProduct->getByUserId($userId); // получаю продукты в корзине пользователя
+        $cartProductsByUserId = $this->userProduct->getByUserId($userId);// получаю продукты в корзине пользователя
 
         if ($cartProductsByUserId !== []) {
 

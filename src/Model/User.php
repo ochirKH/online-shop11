@@ -47,6 +47,7 @@ class User extends Model
     private function hydrate($data): User
     {
         $obj = new self();
+
         $obj->id = $data['id'];
         $obj->name = $data['name'];
         $obj->email = $data['email'];

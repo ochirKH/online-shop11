@@ -12,7 +12,7 @@ class App
         $requestUri = $_SERVER['REQUEST_URI']; // создаем переменные для УРИ
 
         if (isset($this->routes[$requestUri])) { // проверка если такой УРИ
-            $routesMethod = $this->routes[$requestUri]; // GET or POST or .....
+            $routesMethod = $this->routes[$requestUri]; // /login, /registration ......
 
             $requestMethod = $_SERVER['REQUEST_METHOD']; // создаем переменные для Метода
 

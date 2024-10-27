@@ -18,15 +18,15 @@
         <div class="card text-center">
             <a href="#">
                 <div class="card-header">
-                    <?php echo $elem['name'] ?? ''; ?>
+                    <?php echo $elem->getName() ?? ''; ?>
                 </div>
                 <div class="card-footer">
-                    <?php echo $elem['price'] ?? ''; ?> рублей
+                    <?php echo $elem->getPrice() ?? ''; ?> рублей
                 </div>
-                <img class="card-img-top" src=<?php echo $elem['images'] ?? ''; ?> width="500" alt="Card image">
+                <img class="card-img-top" src=<?php echo $elem->getImages() ?? ''; ?> width="500" alt="Card image">
                 <div class="card-body">
-                    <p class="card-text text-muted"> <?php echo $elem['category'] ?? ''; ?></p>
-                    <a href="#"><h5 class="card-title"><?php echo $elem['description'] ?? ''; ?></h5></a>
+                    <p class="card-text text-muted"> <?php echo $elem->getCategory() ?? ''; ?></p>
+                    <a href="#"><h5 class="card-title"><?php echo $elem->descriprion() ?? ''; ?></h5></a>
                 </div>
             </a>
         </form>

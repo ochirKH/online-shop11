@@ -29,7 +29,7 @@ $app->createRoute('/add-product', 'POST', CartController::class, 'addProductsInC
 $app->createRoute('/add-product-favorite', 'GET', FavoriteController::class, 'addProduct');
 $app->createRoute('/add-product-favorite', 'POST', FavoriteController::class, 'addProductInFavorite');
 
-$app->createRoute('/favorite', 'GET', FavoriteController::class, 'checkFavorite');
+$app->createRoute('/favorite', 'GET', FavoriteController::class, 'getProduct');
 $app->createRoute('/main', 'GET', ProductController::class, 'getAll');
 $app->createRoute('/logout', 'GET', UserController::class, 'logout');
 $app->createRoute('/cart', 'GET', CartController::class, 'checkCart');
