@@ -51,32 +51,10 @@ class OrderController
 
             $cartProductsByUserId = $this->userProduct->getByUserId($userId); // получаю продукты в корзине пользователя
 
-//            $productIds = [];
-//            foreach ($cartProductsByUserId as $product) {
-//                $productIds[] = $product['product_id']; //  вытаскиваю id продуктов пользователся
-//            }
-//
-//            $products = [];
-//            foreach ($productIds as $productId) {
-//                $products[] = $this->product->getProductById($productId);
-//                // получаю продукты по id с продуктов
-//                // id name price images category ....
-//            }
-//
-//            $result = [];
-//
-//            foreach ($products as &$product) {
-//                foreach ($cartProductsByUserId as $cartProductByUserId) {
-//                    if ($cartProductByUserId['product_id'] === $product->getId()) {
-//                        $product['amount'] = $cartProductByUserId['amount'];
-//                        $result[] = $product;
-//                    }
-//                }
-//            }
             $sumOneProduct = [];
 
             foreach ($cartProductsByUserId as $elem) {
-                $sumOneProduct[] = $elem->getProduct()->getAmount() * $elem->getProduct()->getPrice();
+                $sumOneProduct[] = $elem->getAmount() * $elem->getProduct()->getPrice();
             }
 
             $sumAll = 0;
@@ -87,8 +65,8 @@ class OrderController
             $orderId = $this->userOrder->add($contactName, $contactPhone, $address, $sumAll, $userId); // id
 
 
-            foreach ($cartProductsByUserIdas->getAmount() as  $product) {
-                $this->orderProduct->add($orderId, $product);
+            foreach ($cartProductsByUserId as  $product) {
+                $this->orderProduct->add($orderId, $product->getProduct()->getId(), $product->getAmount(), $product->getProduct()->getPrice());
             }
 
             $this->userProduct->deleteProduct($userId);
@@ -107,7 +85,7 @@ class OrderController
                 $errors['contact-name'] = 'поле имени пустое';
             } elseif (strtoupper($contactName[0]) !== $contactName[0]) {
                 $errors['contact-name'] = 'Имя должно начинаться с большой буквы';
-            } elseif (strlen(($contactName) >= 2)) {
+            } elseif (strlen(($contactName) <= 2)) {
                 $errors['contact-name'] = 'в имени должно быть больше букв';
             }
         } else {
@@ -116,7 +94,7 @@ class OrderController
 
         if (isset($_POST['contact-phone'])) {
             $contactPhone = $_POST['contact-phone'];
-            if (is_numeric($contactPhone)) {
+            if (!is_numeric($contactPhone)) {
                 $errors['contact-phone'] = 'напишите цифры в поле для телефона';
             }
         } else {

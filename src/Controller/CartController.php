@@ -39,7 +39,7 @@ class CartController
             header('Location: /login');
         }
 
-        $errors[] = $this->validateInAddProduct();
+        $errors = $this->validateInAddProduct();
 
         if (empty($errors)) {
 
@@ -54,7 +54,7 @@ class CartController
                 $this->userProduct->addProduct($userId, $productId, $amount);
                 // Добавляю в корзину товар и количество
             } else {
-                $this->userProduct->updateAmount($userId, $productId, $userProducts['amount'] + $amount);
+                $this->userProduct->updateAmount($userId, $productId, $userProducts->getAmount() + $amount);
                 //если товар уже есть такой, то меняе количество
             }
 

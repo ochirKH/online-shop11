@@ -20,11 +20,11 @@ $app->createRoute('/login', 'POST', UserController::class,'login');
 $app->createRoute('/registration', 'GET', UserController::class, 'getRegistration');
 $app->createRoute('/registration', 'POST', UserController::class, 'registration');
 
-$app->createRoute('/buy', 'GET', OrderController::class, 'getOrder');
-$app->createRoute('/buy', 'POST', OrderController::class, 'order');
+$app->createRoute('/order', 'GET', OrderController::class, 'getOrder');
+$app->createRoute('/order', 'POST', OrderController::class, 'order');
 
 $app->createRoute('/add-product', 'GET', CartController::class, 'getAddProduct');
-$app->createRoute('/add-product', 'POST', CartController::class, 'addProductsInCart');
+$app->createRoute('/add-product', 'POST', CartController::class, 'addProduct');
 
 $app->createRoute('/add-product-favorite', 'GET', FavoriteController::class, 'addProduct');
 $app->createRoute('/add-product-favorite', 'POST', FavoriteController::class, 'addProductInFavorite');
