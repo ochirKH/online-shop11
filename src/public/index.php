@@ -15,10 +15,10 @@ Autoload::registrate("/var/www/html/src/");
 $app = new App();
 
 $app->createRoute('/login', 'GET', UserController::class, 'getLogin');
-$app->createRoute('/login', 'POST', UserController::class,'login');
+$app->createRoute('/login', 'POST', UserController::class,'login', \Request\LoginRequest::class);
 
 $app->createRoute('/registration', 'GET', UserController::class, 'getRegistration');
-$app->createRoute('/registration', 'POST', UserController::class, 'registration');
+$app->createRoute('/registration', 'POST', UserController::class, 'registration', \Request\RegistrateRequest::class);
 
 $app->createRoute('/order', 'GET', OrderController::class, 'getOrder');
 $app->createRoute('/order', 'POST', OrderController::class, 'order');

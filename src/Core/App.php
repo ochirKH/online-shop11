@@ -3,6 +3,8 @@
 namespace Core;
 
 
+use Request\Request;
+
 class App
 {
     private array $routes = [];
@@ -19,11 +21,20 @@ class App
             if (isset($routesMethod[$requestMethod])) { // проверка на наличие GET или POST или ...
                 $handler = $routesMethod[$requestMethod];
 
-                $class = $handler['class'];
-                $method = $handler['method'];
+                $handleClass = $handler['class'];
+                $handleMethod = $handler['method'];
+                $handlerRequest = $handler['request'];
 
-                $obj = new $class();  // создание объекта
-                $obj->$method();
+                $obj = new $handleClass();  // создание объекта
+
+                if (empty($handlerRequest)){
+                    $obj->$handleMethod();
+                } else {
+                    $request = new Request($requestUri, $requestMethod, $_POST);
+                    $obj->$handleMethod($request);
+                }
+
+
             } else {
                 echo "$requestUri не поддерживается с методом $requestMethod";
             }
