@@ -7,6 +7,7 @@ use Controller\FavoriteController;
 use Controller\OrderController;
 use Controller\ProductController;
 use Controller\UserController;
+use Request\LoginRequest;
 use Core\Autoload;
 use Core\App;
 
@@ -15,7 +16,7 @@ Autoload::registrate("/var/www/html/src/");
 $app = new App();
 
 $app->createRoute('/login', 'GET', UserController::class, 'getLogin');
-$app->createRoute('/login', 'POST', UserController::class,'login', \Request\LoginRequest::class);
+$app->createRoute('/login', 'POST', UserController::class,'login', LoginRequest::class);
 
 $app->createRoute('/registration', 'GET', UserController::class, 'getRegistration');
 $app->createRoute('/registration', 'POST', UserController::class, 'registration', \Request\RegistrateRequest::class);

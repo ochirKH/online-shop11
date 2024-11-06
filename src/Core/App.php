@@ -3,6 +3,7 @@
 namespace Core;
 
 
+use Request\LoginRequest;
 use Request\Request;
 
 class App
@@ -23,16 +24,16 @@ class App
 
                 $handleClass = $handler['class'];
                 $handleMethod = $handler['method'];
-                $handlerRequest = $handler['request'];
-
+//                $handleRequest = $handler['request'];
+//
                 $obj = new $handleClass();  // создание объекта
-
-                if (empty($handlerRequest)){
+//
+//                if (empty($handleRequest)){
                     $obj->$handleMethod();
-                } else {
-                    $request = new Request($requestUri, $requestMethod, $_POST);
-                    $obj->$handleMethod($request);
-                }
+//                } else {
+//                    $request = new LoginRequest($requestUri, $requestMethod, $_POST);
+//                    $obj->$handleMethod($request);
+//                }
 
 
             } else {
