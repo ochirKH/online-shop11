@@ -8,6 +8,7 @@ use Request\LoginRequest;
 use Request\RegistrateRequest;
 
 
+
 class UserController
 {
     private User $user;
@@ -26,17 +27,13 @@ class UserController
     {
         require_once '../View/get_registration.php';
     }
-
-    public function data()
-    {
-        return $data = $_POST;
-    }
-    public function registration(Data $data): void
+    
+    public function registration(RegistrateRequest $request): void
     {
         $errors = [];
 
-        if (isset($data['name'])) {
-            $name = $data['name'];
+        if (isset($request['name'])) {
+            $name = $request['name'];
             // Валидация на имя
             if (empty($name)) {
                 $errors['name'] = 'поле пустое';
@@ -49,8 +46,8 @@ class UserController
             $errors['name'] = 'Пропишите Имя';
         }
 
-        if (isset($data['email'])) {
-            $email = $data['email'];
+        if (isset($request['email'])) {
+            $email = $request['email'];
             // Валидация на почту
             if (empty($email)) {
                 $errors['email'] = 'поле пустое';
@@ -62,8 +59,8 @@ class UserController
         }
 
 
-        if (isset($data['psw'])) {
-            $password = $data['psw'];
+        if (isset($request['psw'])) {
+            $password = $request['psw'];
             // Валидация на пароль
             if (empty($password)) {
                 $errors['psw'] = 'поле пустое';
@@ -74,15 +71,15 @@ class UserController
             $errors['psw'] = 'Пропишите пароль';
         }
 
-        if (isset($data['psw-repeat'])) {
-            $repeatPsw = $data['psw-repeat'];
+        if (isset($request['psw-repeat'])) {
+            $repeatPsw = $request['psw-repeat'];
             if ($password != $repeatPsw) {
                 $errors['psw'] = 'пароль не совпадает';
             }
             if (empty($errors)) {
-                $name = $data['name'];
-                $email = $data['email'];
-                $password = $data['psw'];
+                $name = $request['name'];
+                $email = $request['email'];
+                $password = $request['psw'];
                 $hash = password_hash($password, PASSWORD_DEFAULT);
                 $this->user->add($name, $email, $hash);
                 header('Location: /login');
@@ -93,13 +90,25 @@ class UserController
     }
 
 
-    public function login(LoginRequest $request): void
+    public function login($request): void
     {
-        $errors = $request->validate();
+        $errors = [];
+
+        if (isset($request['email'])){
+            $email = $request['email'];
+        } else {
+            $errors['email'] = 'поле для почты пустая';
+        }
+
+        if (isset($request['password'])) {
+            $password = $request['password'];
+        } else {
+            $errors['password'] = 'поле для пароля пустая';
+        }
 
         if (empty($errors)) {
-            $password = $request->getPassword();
-            $email = $request->getEmail();
+            $password = $request['psw'];
+            $email = $request['email'];
 
             $user = $this->user->getByEmail($email);
 

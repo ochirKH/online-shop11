@@ -29,7 +29,7 @@ class App
                 $obj = new $handleClass();  // создание объекта
 //
 //                if (empty($handleRequest)){
-                    $obj->$handleMethod();
+                    $obj->$handleMethod($requestUri, $requestMethod, $_POST);
 //                } else {
 //                    $request = new LoginRequest($requestUri, $requestMethod, $_POST);
 //                    $obj->$handleMethod($request);
