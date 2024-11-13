@@ -4,6 +4,7 @@ namespace Core;
 
 
 use Request\LoginRequest;
+use Request\RegistrateRequest;
 use Request\Request;
 
 class App
@@ -22,14 +23,16 @@ class App
             if (isset($routesMethod[$requestMethod])) { // проверка на наличие GET или POST или ...
                 $handler = $routesMethod[$requestMethod];
 
-                $handleClass = $handler['class'];
-                $handleMethod = $handler['method'];
+                $handlerClass = $handler['class'];
+                $handlerMethod = $handler['method'];
 //                $handleRequest = $handler['request'];
 //
-                $obj = new $handleClass();  // создание объекта
+                $obj = new $handlerClass();
+                $objRequest = new RegistrateRequest($requestUri, $requestMethod, $_POST);  // создание объекта
 //
 //                if (empty($handleRequest)){
-                    $obj->$handleMethod($requestUri, $requestMethod, $_POST);
+
+                    $obj->$handlerMethod($objRequest);
 //                } else {
 //                    $request = new LoginRequest($requestUri, $requestMethod, $_POST);
 //                    $obj->$handleMethod($request);
@@ -49,7 +52,8 @@ class App
     {
         $this->routes[$route][$method] = [
             'class' => $className,
-            'method' => $methodName
+            'method' => $methodName,
+//            'request' => $requestName
         ];
     }
 }
