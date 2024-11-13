@@ -6,6 +6,7 @@ use \Model\User;
 use \Model\Product;
 use \Model\Order;
 use \Model\UserProduct;
+use Request\CartRequest;
 
 class CartController
 {
@@ -13,6 +14,7 @@ class CartController
     private Product $product;
     private UserProduct $userProduct;
     private Order $userOrder;
+    private CartRequest $cartRequest;
 
     public function __construct()
     {
@@ -20,6 +22,7 @@ class CartController
         $this->product = new Product();
         $this->userProduct = new UserProduct();
         $this->userOrder = new Order();
+        $this->cartRequest = new CartRequest();
     }
 
     public function getAddProduct(): void
@@ -39,22 +42,22 @@ class CartController
             header('Location: /login');
         }
 
-        $errors[] = $this->validateInAddProduct();
+        $errors = $this->cartRequest->validate();
 
         if (empty($errors)) {
 
             $productId = $_POST['product-id'];
             $amount = $_POST['amount'];
-            $userId = $_POST['userId'];
+            $userId = $_SESSION['userId'];
 
             // Проверка у пользователя  таких продуктов
-            $result = $this->userProduct->getByUserIdAndProductId($userId, $productId);
+            $userProducts = $this->userProduct->getByUserIdAndProductId($userId, $productId);
 
-            if ($result === null) { // Если товара нет в корзине, то создаем новый
+            if ($userProducts === null) { // Если товара нет в корзине, то создаем новый
                 $this->userProduct->addProduct($userId, $productId, $amount);
                 // Добавляю в корзину товар и количество
             } else {
-                $this->userProduct->updateAmount($userId, $productId, $result['amount'] + $amount);
+                $this->userProduct->updateAmount($userId, $productId, $userProducts->getAmount() + $amount);
                 //если товар уже есть такой, то меняе количество
             }
 
@@ -64,41 +67,6 @@ class CartController
         echo 'Такого товара в каталоге нет';
     }
 
-    public function validateInAddProduct(): array
-    {
-        $errors = [];
-
-        if (isset($_POST['product-id'])) {
-            $productId = $_POST['product-id'];
-
-            $product = $this->product->getProductById($productId);
-
-            if ($product === null) {
-                $errors['product-id'] = 'продукта с таки ID не существует';
-            } elseif (empty($productId)) {
-                $errors['product-id'] = 'поле продукта не должен быть пустым';
-            } elseif ($productId < 0) {
-                $errors['product-id'] = 'поле продукта id не должен быть отрицательным';
-            } elseif (!is_numeric($productId)) {
-                $errors['product-id'] = 'Такого товара не существует';
-            }
-        } else {
-            $errors['product-id'] = 'id продукта должен быть указан';
-        }
-        if (isset($_POST['amount'])) {
-            $amount = $_POST['amount'];
-            if (empty('amount')) {
-                $errors['amount'] = 'поле количества не должен быть пустым';
-            } elseif ($amount < 0) {
-                $errors['amount'] = 'поле количества не должен быть отрицательным';
-            } elseif (!is_numeric($amount)) {
-                $errors['amount'] = 'Такой цифры не существует';
-            }
-        } else {
-            $errors['amount'] = 'укажите количетсво  товара';
-        }
-        return $errors;
-    }
 
 
     public function checkCart(): void
@@ -110,33 +78,34 @@ class CartController
         }
         $userId = $_SESSION['userId'];
 
-        $cartProductsByUserId = $this->userProduct->getByUserId($userId); // получаю продукты в корзине пользователя
+        $cartProductsByUserId = $this->userProduct->getByUserId($userId);// получаю продукты в корзине пользователя
 
         if ($cartProductsByUserId !== []) {
 
-            $productIds = [];
-            foreach ($cartProductsByUserId as $product) {
-                $productIds[] = $product['product_id']; //  вытаскиваю id продуктов пользователся
-            }
+//            $productIds = [];
+//            foreach ($cartProductsByUserId as $product) {
+//                $productIds[] = $product['product_id']; //  вытаскиваю id продуктов пользователся
+//            }
+//
+//            $products = [];
+//            foreach ($productIds as $productId) {
+//                $products[] = $this->product->getProductById($productId);
+//                // получаю продукты по id с продуктов
+//                // id name price images category ....
+//            }
+//
+//            foreach ($products as &$product) {
+//                foreach ($cartProductsByUserId as $cartProductByUserId) {
+//                    if ($cartProductByUserId['product_id'] === $product->getId()) {
+//                        $product['amount'] = $cartProductByUserId['amount'];
+//                        $result[] = $product;
+//                    }
+//                }
+//            }
+            $sumOneProduct = [];
 
-            $products = [];
-            foreach ($productIds as $productId) {
-                $products[] = $this->product->getProductById($productId);
-                // получаю продукты по id с продуктов
-                // id name price images category ....
-            }
-
-            foreach ($products as &$product) {
-                foreach ($cartProductsByUserId as $cartProductByUserId) {
-                    if ($cartProductByUserId['product_id'] === $product->getId()) {
-                        $product['amount'] = $cartProductByUserId['amount'];
-                        $result[] = $product;
-                    }
-                }
-            }
-
-            foreach ($result as $elem) {
-                $sumOneProduct[] = $elem['amount'] * $elem->getPrice();
+            foreach ($cartProductsByUserId as $elem) {
+                $sumOneProduct[] = $elem->getAmount() * $elem->getProduct()->getPrice();
             }
 
             $sumAll = 0;

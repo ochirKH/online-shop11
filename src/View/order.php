@@ -1,4 +1,4 @@
-<form action="/buy" method="POST">
+<form action="/order" method="POST">
     <div class="container">
         <h1>Оформление заказа</h1>
 

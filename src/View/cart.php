@@ -1,4 +1,3 @@
-
 <div class="container">
     <a href='/logout'>Выход</a>
     <div>
@@ -13,31 +12,35 @@
 
     <h3>КОРЗИНА</h3>
     <div class="card-deck">
-        <?php foreach ($result as $elem): ?>
-        <form action="/main" method="POST"></form>
-        <div class="card text-center">
-            <a href="#">
-                <div class="card-header">
-                    <?php echo $elem['name'] ?? ''; ?>
-                </div>
-                <div class="card-footer">
-                    <?php echo $elem['price'] ?? ''; ?> рублей
-                </div>
-                <img class="card-img-top" src=<?php echo $elem['images'] ?? ''; ?> width="500" alt="Card image">
-                <div class="card-body">
-                    <p class="card-text text-muted"> <?php echo $elem['category'] ?? ''; ?></p>
-                    <a href="#"><h5 class="card-title"><?php echo $elem['description'] ?? ''; ?></h5></a>
-                </div>
-            </a>
-        </form>
+        <?php foreach ($cartProductsByUserId as $elem): ?>
+            <form action="/main" method="POST"></form>
+            <div class="card text-center">
+                <a href="#">
+                    <div class="card-header">
+                        <?php echo $elem->getProduct()->getName() ?? ''; ?>
+                    </div>
+                    <div class="card-footer">
+                        <?php echo $elem->getProduct()->getPrice() ?? ''; ?> рублей
+                    </div>
+                    <img class="card-img-top" src=<?php echo $elem->getProduct()->getImages() ?? ''; ?> width="500"
+                         alt="Card image">
+                    <div class="card-body">
+                        <p class="card-text text-muted"> <?php echo $elem->getProduct()->getCategory() ?? ''; ?></p>
+                        <a href="#"><h5
+                                    class="card-title"><?php echo $elem->getProduct()->getDescription() ?? ''; ?></h5>
+                        </a>
+                    </div>
+                </a>
+                </form>
 
-    </div>
+            </div>
 
-    <?php endforeach; ?>
+        <?php endforeach; ?>
         <p><b><?php if (isset($sumAll)) {
-                    echo 'Обшая сумма в корзине ' . $sumAll . ' рублей'; ?></b></p>
-    </div>    <a href='/buy'>Купить все содержимое в корзине</a>
-    <?php }?>
+                echo 'Обшая сумма в корзине ' . $sumAll . ' рублей'; ?></b></p>
+    </div>
+    <a href='/buy'>Купить все содержимое в корзине</a>
+    <?php } ?>
 
 
 </div>

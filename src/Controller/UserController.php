@@ -2,7 +2,11 @@
 
 namespace Controller;
 
+use Controller\Data\Data;
 use \Model\User;
+use Request\LoginRequest;
+use Request\RegistrateRequest;
+
 
 
 class UserController
@@ -23,42 +27,88 @@ class UserController
     {
         require_once '../View/get_registration.php';
     }
-
-    public function registration(): void
+    
+    public function registration(RegistrateRequest $request): void
     {
-        $errors = $this->validate();
+        $errors = [];
 
-        if (empty($errors)) {
-            $name = $_POST['name'];
-            $email = $_POST['email'];
-            $repeatPsw = $_POST['psw-repeat'];
-            $password = $_POST['psw'];
-            $hash = password_hash($password, PASSWORD_DEFAULT);
-            $this->user->add($name, $email, $hash);
-            header('Location: /login');
+        if (isset($request['name'])) {
+            $name = $request['name'];
+            // Валидация на имя
+            if (empty($name)) {
+                $errors['name'] = 'поле пустое';
+            } elseif (strtoupper($name[0]) !== $name[0]) {
+                $errors['name'] = 'имя начинается с большой буквы';
+            } elseif (strlen($name) <= 2) {
+                $errors['name'] = 'в имени должно быть больше букв';
+            }
         } else {
-            require_once '../View/get_registration.php';
+            $errors['name'] = 'Пропишите Имя';
+        }
+
+        if (isset($request['email'])) {
+            $email = $request['email'];
+            // Валидация на почту
+            if (empty($email)) {
+                $errors['email'] = 'поле пустое';
+            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $errors['email'] = 'не правильно указана почта';
+            }
+        } else {
+            $errors['email'] = 'Пропишите почту';
+        }
+
+
+        if (isset($request['psw'])) {
+            $password = $request['psw'];
+            // Валидация на пароль
+            if (empty($password)) {
+                $errors['psw'] = 'поле пустое';
+            } elseif (strlen($password) <= 4) {
+                $errors['psw'] = 'пароль короткий';
+            }
+        } else {
+            $errors['psw'] = 'Пропишите пароль';
+        }
+
+        if (isset($request['psw-repeat'])) {
+            $repeatPsw = $request['psw-repeat'];
+            if ($password != $repeatPsw) {
+                $errors['psw'] = 'пароль не совпадает';
+            }
+            if (empty($errors)) {
+                $name = $request['name'];
+                $email = $request['email'];
+                $password = $request['psw'];
+                $hash = password_hash($password, PASSWORD_DEFAULT);
+                $this->user->add($name, $email, $hash);
+                header('Location: /login');
+            } else {
+                require_once '../View/get_registration.php';
+            }
         }
     }
 
 
-    public function login(): void
+    public function login($request): void
     {
         $errors = [];
 
-        // проверка на наличие почты
-        if (!isset($_POST['email'])) {
-            $errors['email'] = 'поле почты пустая';
+        if (isset($request['email'])){
+            $email = $request['email'];
+        } else {
+            $errors['email'] = 'поле для почты пустая';
         }
 
-        // проверка на наличие пароля
-        if (!isset($_POST['password'])) {
-            $errors['password'] = 'поле пароля пустая';
+        if (isset($request['password'])) {
+            $password = $request['password'];
+        } else {
+            $errors['password'] = 'поле для пароля пустая';
         }
 
         if (empty($errors)) {
-            $password = $_POST['password'];
-            $email = $_POST['email'];
+            $password = $request['psw'];
+            $email = $request['email'];
 
             $user = $this->user->getByEmail($email);
 
@@ -78,59 +128,6 @@ class UserController
             }
         }
         require_once '../View/get_login.php';
-
-    }
-
-    private function validate(): array
-    {
-        $errors = [];
-
-        if (isset($_POST['name'])) {
-            $name = $_POST['name'];
-            // Валидация на имя
-            if (empty($name)) {
-                $errors['name'] = 'поле пустое';
-            } elseif (strtoupper($name[0]) !== $name[0]) {
-                $errors['name'] = 'имя начинается с большой буквы';
-            } elseif (strlen($name) <= 2) {
-                $errors['name'] = 'в имени должно быть больше букв';
-            }
-        } else {
-            $errors['name'] = 'Пропишите Имя';
-        }
-
-        if (isset($_POST['email'])) {
-            $email = $_POST['email'];
-            // Валидация на почту
-            if (empty($email)) {
-                $errors['email'] = 'поле пустое';
-            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $errors['email'] = 'не правильно указана почта';
-            }
-        } else {
-            $errors['email'] = 'Пропишите почту';
-        }
-
-        if (isset($_POST['psw-repeat'])) {
-            $repeatPsw = $_POST['psw-repeat'];
-        }
-
-        if (isset($_POST['psw'])) {
-            $password = $_POST['psw'];
-            // Валидация на пароль
-            if (empty($password)) {
-                $errors['psw'] = 'поле пустое';
-            } elseif ($password != $repeatPsw) {
-                $errors['psw'] = 'пароль не совпадает';
-            } elseif (strlen($password) <= 4) {
-                $errors['psw'] = 'пароль короткий';
-            }
-        } else {
-            $errors['psw'] = 'Пропишите пароль';
-        }
-
-        // Вытаскиваем результат
-        return $errors;
     }
 
 

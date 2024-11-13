@@ -10,7 +10,7 @@ class Order extends Model
     private float $sum;
     private User $user;
 
-    public function add(string $contactName, int $contactPhone, string $address, float $sum, int $userId): Order|false
+    public function add(string $contactName, int $contactPhone, string $address, float $sum, int $userId): array|null
     {
         $stmt = $this->pdo->prepare('INSERT INTO orders (contact_name, contact_phone, address, sum, user_id) 
 VALUES (:name, :phone, :address, :sum, :user_id) returning id');
@@ -18,13 +18,15 @@ VALUES (:name, :phone, :address, :sum, :user_id) returning id');
         $data = $stmt->fetch();
 
         if (empty($data)) {
-            return false;
+            return null;
         }
 
-        return $this->hydrate($data);
+        $obj = new self();
+
+        return $obj->id = $data['id'];
     }
 
-    public function getAllOfOrders($userId): array
+    public function getById(int $userId): array
     {
         $stmt = $this->pdo->prepare('SELECT * FROM orders WHERE user_id = :userId');
         $stmt->execute(['userId' => $userId]);
@@ -33,18 +35,7 @@ VALUES (:name, :phone, :address, :sum, :user_id) returning id');
         $result = [];
 
         foreach ($data as $elem) {
-
-            $user = new User();
-            $userFromUser = $user->getId($elem['user_id']);
-
-            $obj = new self();
-            $obj->id = $data['id'];
-            $obj->contactName = $data['contact_name'];
-            $obj->contactPhone = $data['contact_phone'];
-            $obj->address = $data['address'];
-            $obj->sum = $data['sum'];
-            $obj->user = $userFromUser;
-
+            $obj = $this->hydrate($elem);
             $result = $obj;
         }
 
@@ -53,14 +44,17 @@ VALUES (:name, :phone, :address, :sum, :user_id) returning id');
 
     private function hydrate($data): Order
     {
+        $user = new User();
+        $userFromDb = $user->getById($data['user_id']);
+
         $obj = new self();
+
         $obj->id = $data['id'];
         $obj->contactName = $data['contact_name'];
         $obj->contactPhone = $data['contact_phone'];
         $obj->address = $data['address'];
         $obj->sum = $data['sum'];
-        $obj->user = $userFromUser;
-
+        $obj->user = $userFromDb;
 
         return $obj;
     }

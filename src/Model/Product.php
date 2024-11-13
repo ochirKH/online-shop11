@@ -38,6 +38,7 @@ class Product extends Model
     private function hydrate($data): Product
     {
         $obj = new self();
+
         $obj->id = $data['id'];
         $obj->name = $data['name'];
         $obj->price = $data['price'];

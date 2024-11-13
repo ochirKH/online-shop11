@@ -43,7 +43,7 @@ class FavoriteController
             header('Location: /login');
         }
 
-        $errors = $this->validateFavorite();
+        $errors = $this->validate();
 
         if (empty($errors)) {
 
@@ -62,9 +62,10 @@ class FavoriteController
 
     }
 
-    public function checkFavorite()
+    public function getProduct()
     {
         session_start();
+
 
         if (!isset($_SESSION['userId'])) {
             header('Location: /login');
@@ -73,21 +74,21 @@ class FavoriteController
 
         $favoritesProduct = $this->favorite->getById($userId);
 
-        $idProducts = [];
-        foreach ($favoritesProduct as $favoriteProduct) {
-            $idProducts[] = $favoriteProduct['product_id'];
-        }
-
-        $fullInfProduct = [];
-        foreach ($idProducts as $idProduct) {
-            $fullInfProduct[] = $this->product->getProductById($idProduct);
-        }
+//        $idProducts = [];
+//        foreach ($favoritesProduct as $favoriteProduct) {
+//            $idProducts[] = $favoriteProduct['product_id'];
+//        }
+//
+//        $fullInfProduct = [];
+//        foreach ($idProducts as $idProduct) {
+//            $fullInfProduct[] = $this->product->getProductById($idProduct);
+//        }
 
         require_once './../View/favorite.php';
 
     }
 
-    private function validateFavorite(): array
+    private function validate(): array
     {
         $errors = [];
 
@@ -96,14 +97,14 @@ class FavoriteController
 
             $product = $this->product->getProductById($productId);
 
-            if ($product === null) {
-                $errors['product-id'] = 'продукта с таки ID не существует';
-            } elseif (empty($productId)) {
+            if (empty($productId)) {
                 $errors['product-id'] = 'поле продукта не должен быть пустым';
-            } elseif ($productId < 0) {
-                $errors['product-id'] = 'поле продукта id не должен быть отрицательным';
             } elseif (!is_numeric($productId)) {
                 $errors['product-id'] = 'такого товара не существует';
+            } elseif ($productId < 0) {
+                $errors['product-id'] = 'поле продукта id не должен быть отрицательным';
+            } elseif ($product->getId() === null) {
+                $errors['product-id'] = 'продукта с таки ID не существует';
             }
         } else {
             $errors['product-id'] = 'id продукта должен быть указан';
