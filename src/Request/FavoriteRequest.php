@@ -4,16 +4,11 @@ namespace Request;
 
 use Model\Product;
 
-class CartRequest extends Request
+class FavoriteRequest extends Request
 {
     public function getProductId()
     {
         return $this->data['product-id'];
-    }
-
-    public function getAmount()
-    {
-        return $this->data['amount'];
     }
 
     public function validate(): array
@@ -36,18 +31,6 @@ class CartRequest extends Request
             }
         } else {
             $errors['product-id'] = 'id продукта должен быть указан';
-        }
-        if (isset($this->data['amount'])) {
-            $amount = $this->data['amount'];
-            if (empty('amount')) {
-                $errors['amount'] = 'поле количества не должен быть пустым';
-            } elseif (!is_numeric($amount)) {
-                $errors['amount'] = 'Такой цифры не существует';
-            } elseif ($amount < 0) {
-                $errors['amount'] = 'поле количества не должен быть отрицательным';
-            }
-        } else {
-            $errors['amount'] = 'укажите количетсво  товара';
         }
         return $errors;
     }

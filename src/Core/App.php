@@ -3,7 +3,14 @@
 namespace Core;
 
 
+use Controller\CartController;
+use Controller\FavoriteController;
+use Controller\OrderController;
+use Controller\UserController;
+use Request\CartRequest;
+use Request\FavoriteRequest;
 use Request\LoginRequest;
+use Request\OrderRequest;
 use Request\RegistrateRequest;
 use Request\Request;
 
@@ -23,21 +30,31 @@ class App
             if (isset($routesMethod[$requestMethod])) { // проверка на наличие GET или POST или ...
                 $handler = $routesMethod[$requestMethod];
 
-                $handlerClass = $handler['class'];
-                $handlerMethod = $handler['method'];
+                $className = $handler['class'];
+                $methodName = $handler['method'];
 //                $handleRequest = $handler['request'];
 //
-                $obj = new $handlerClass();
-                $objRequest = new RegistrateRequest($requestUri, $requestMethod, $_POST);  // создание объекта
+                $firstObj = new $className();
+
 //
-//                if (empty($handleRequest)){
-
-                    $obj->$handlerMethod($objRequest);
-//                } else {
-//                    $request = new LoginRequest($requestUri, $requestMethod, $_POST);
-//                    $obj->$handleMethod($request);
-//                }
-
+                if ($className === UserController::class && $methodName === 'registration') {
+                    $objRequest = new RegistrateRequest($requestUri, $requestMethod, $_POST);  // создание объекта
+                    $firstObj->$methodName($objRequest);
+                } elseif ($className === UserController::class && $methodName === 'login') {
+                    $objRequest = new LoginRequest($requestUri, $requestMethod, $_POST);
+                    $firstObj->$methodName($objRequest);
+                } elseif ($className === CartController::class && $methodName === 'addProduct') {
+                    $objRequest = new CartRequest($requestUri, $requestMethod, $_POST);
+                    $firstObj->$methodName($objRequest);
+                } elseif ($className === OrderController::class && $methodName === 'order') {
+                    $objRequest = new OrderRequest($requestUri, $requestMethod, $_POST);
+                    $firstObj->$methodName($objRequest);
+                } elseif ($className === FavoriteController::class && $methodName === 'addProductInFavorite') {
+                    $objRequest = new FavoriteRequest($requestUri, $requestMethod, $_POST);
+                    $firstObj->$methodName($objRequest);
+                } else {
+                    $firstObj->$methodName();
+                }
 
             } else {
                 echo "$requestUri не поддерживается с методом $requestMethod";

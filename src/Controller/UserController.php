@@ -29,53 +29,6 @@ class UserController
 
     public function registration(RegistrateRequest $request): void
     {
-//        $errors = [];
-//
-//        if (isset($request['name'])) {
-//            $name = $request['name'];
-//            // Валидация на имя
-//            if (empty($name)) {
-//                $errors['name'] = 'поле пустое';
-//            } elseif (strtoupper($name[0]) !== $name[0]) {
-//                $errors['name'] = 'имя начинается с большой буквы';
-//            } elseif (strlen($name) <= 2) {
-//                $errors['name'] = 'в имени должно быть больше букв';
-//            }
-//        } else {
-//            $errors['name'] = 'Пропишите Имя';
-//        }
-//
-//        if (isset($request['email'])) {
-//            $email = $request['email'];
-//            // Валидация на почту
-//            if (empty($email)) {
-//                $errors['email'] = 'поле пустое';
-//            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-//                $errors['email'] = 'не правильно указана почта';
-//            }
-//        } else {
-//            $errors['email'] = 'Пропишите почту';
-//        }
-//
-//
-//        if (isset($request['psw'])) {
-//            $password = $request['psw'];
-//            // Валидация на пароль
-//            if (empty($password)) {
-//                $errors['psw'] = 'поле пустое';
-//            } elseif (strlen($password) <= 4) {
-//                $errors['psw'] = 'пароль короткий';
-//            }
-//        } else {
-//            $errors['psw'] = 'Пропишите пароль';
-//        }
-//
-//        if (isset($request['psw-repeat'])) {
-//            $repeatPsw = $request['psw-repeat'];
-//            if ($password != $repeatPsw) {
-//                $errors['psw'] = 'пароль не совпадает';
-//            }
-
         $errors = $request->validate();
 
         if (empty($errors)) {
@@ -91,25 +44,13 @@ class UserController
     }
 
 
-    public function login($request): void
+    public function login(LoginRequest $request): void
     {
-        $errors = [];
-
-        if (isset($request['email'])) {
-            $email = $request['email'];
-        } else {
-            $errors['email'] = 'поле для почты пустая';
-        }
-
-        if (isset($request['password'])) {
-            $password = $request['password'];
-        } else {
-            $errors['password'] = 'поле для пароля пустая';
-        }
+        $errors = $request->validate();
 
         if (empty($errors)) {
-            $password = $request['psw'];
-            $email = $request['email'];
+            $password = $request->getPassword();
+            $email = $request->getEmail();
 
             $user = $this->user->getByEmail($email);
 

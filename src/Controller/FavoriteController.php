@@ -7,6 +7,7 @@ use Model\Order;
 use Model\Product;
 use Model\User;
 use Model\UserProduct;
+use Request\FavoriteRequest;
 
 class FavoriteController
 {
@@ -35,7 +36,7 @@ class FavoriteController
         }
     }
 
-    public function addProductInFavorite()
+    public function addProductInFavorite(FavoriteRequest $request)
     {
         session_start();
 
@@ -43,16 +44,16 @@ class FavoriteController
             header('Location: /login');
         }
 
-        $errors = $this->validate();
+        $errors = $request->validate();
 
         if (empty($errors)) {
 
             $userId = $_SESSION['userId'];
-            $productId = $_POST['product-id'];
+            $productId = $request->getProductId();
 
             $checkProductInFavorite = $this->favorite->getByUserIdAndProductId($userId, $productId);
 
-            if ($checkProductInFavorite === false) {
+            if ($checkProductInFavorite === null) {
                 $this->favorite->addProduct($userId, $productId);
                 header('Location: /main');
             } else {
@@ -86,29 +87,5 @@ class FavoriteController
 
         require_once './../View/favorite.php';
 
-    }
-
-    private function validate(): array
-    {
-        $errors = [];
-
-        if (isset($_POST['product-id'])) {
-            $productId = $_POST['product-id'];
-
-            $product = $this->product->getProductById($productId);
-
-            if (empty($productId)) {
-                $errors['product-id'] = 'поле продукта не должен быть пустым';
-            } elseif (!is_numeric($productId)) {
-                $errors['product-id'] = 'такого товара не существует';
-            } elseif ($productId < 0) {
-                $errors['product-id'] = 'поле продукта id не должен быть отрицательным';
-            } elseif ($product->getId() === null) {
-                $errors['product-id'] = 'продукта с таки ID не существует';
-            }
-        } else {
-            $errors['product-id'] = 'id продукта должен быть указан';
-        }
-        return $errors;
     }
 }

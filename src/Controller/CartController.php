@@ -14,7 +14,6 @@ class CartController
     private Product $product;
     private UserProduct $userProduct;
     private Order $userOrder;
-    private CartRequest $cartRequest;
 
     public function __construct()
     {
@@ -22,7 +21,6 @@ class CartController
         $this->product = new Product();
         $this->userProduct = new UserProduct();
         $this->userOrder = new Order();
-        $this->cartRequest = new CartRequest();
     }
 
     public function getAddProduct(): void
@@ -35,19 +33,19 @@ class CartController
         }
     }
 
-    public function addProduct(): void
+    public function addProduct(CartRequest $request): void
     {
         session_start();
         if (!isset($_SESSION['userId'])) {
             header('Location: /login');
         }
 
-        $errors = $this->cartRequest->validate();
+        $errors = $request->validate();
 
         if (empty($errors)) {
 
-            $productId = $_POST['product-id'];
-            $amount = $_POST['amount'];
+            $productId = $request->getProductId();
+            $amount = $request->getAmount();
             $userId = $_SESSION['userId'];
 
             // Проверка у пользователя  таких продуктов

@@ -7,6 +7,7 @@ use \Model\User;
 use \Model\Product;
 use \Model\Order;
 use \Model\UserProduct;
+use Request\OrderRequest;
 
 class OrderController
 {
@@ -32,7 +33,7 @@ class OrderController
         require_once "./../View/order.php";
     }
 
-    public function order()
+    public function order(OrderRequest $request)
     {
         session_start();
 
@@ -40,14 +41,14 @@ class OrderController
             header('Location: /login');
         }
 
-        $errors = $this->validateOrder();
+        $errors = $request->validate();
 
         if (empty($errors)){
 
             $userId = $_SESSION['userId'];
-            $contactName = $_POST['contact-name'];
-            $contactPhone = $_POST['contact-phone'];
-            $address = $_POST['address'];
+            $contactName = $request->getContactName();
+            $contactPhone = $request->getContactPhone();
+            $address = $request->getAddress();
 
             $cartProductsByUserId = $this->userProduct->getByUserId($userId); // получаю продукты в корзине пользователя
 
@@ -73,43 +74,6 @@ class OrderController
 
             echo 'Товар успешно заказан';
         }
-    }
-
-    private function validateOrder(): array
-    {
-        $errors = [];
-
-        if (isset($_POST['contact-name'])) {
-            $contactName = $_POST['contact-name'];
-            if (empty($contactName)) {
-                $errors['contact-name'] = 'поле имени пустое';
-            } elseif (strtoupper($contactName[0]) !== $contactName[0]) {
-                $errors['contact-name'] = 'Имя должно начинаться с большой буквы';
-            } elseif (strlen(($contactName) <= 2)) {
-                $errors['contact-name'] = 'в имени должно быть больше букв';
-            }
-        } else {
-            $errors['contact-name'] = 'Отсутствует имя';
-        }
-
-        if (isset($_POST['contact-phone'])) {
-            $contactPhone = $_POST['contact-phone'];
-            if (!is_numeric($contactPhone)) {
-                $errors['contact-phone'] = 'напишите цифры в поле для телефона';
-            }
-        } else {
-            $errors['contact-phone'] = 'Отсутствует телефон';
-        }
-
-        if (isset($_POST['address'])) {
-            $address = $_POST['address'];
-            if (empty($address)) {
-                $errors['address'] = 'поле для ввода адреса пустое';
-            }
-        } else {
-            $errors['address'] = 'Отсутствует адрес';
-        }
-        return $errors;
     }
 }
 

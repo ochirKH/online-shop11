@@ -10,7 +10,7 @@ class Order extends Model
     private float $sum;
     private User $user;
 
-    public function add(string $contactName, int $contactPhone, string $address, float $sum, int $userId): array|null
+    public function add(string $contactName, int $contactPhone, string $address, float $sum, int $userId): int|null
     {
         $stmt = $this->pdo->prepare('INSERT INTO orders (contact_name, contact_phone, address, sum, user_id) 
 VALUES (:name, :phone, :address, :sum, :user_id) returning id');
